@@ -7,6 +7,7 @@ import 'package:jhumo/components/button.dart';
 import 'package:jhumo/components/glass_container.dart';
 import 'package:jhumo/components/label.dart';
 import 'package:jhumo/moduls/controller/theme_controller.dart';
+import 'package:jhumo/moduls/data/variable.dart';
 import 'package:jhumo/moduls/model/themer.dart';
 import 'package:jhumo/screens/about_page.dart';
 import 'package:jhumo/screens/intro_page.dart';
@@ -22,6 +23,7 @@ class _SettingPageState extends State<SettingPage> {
   var _themeController = Get.put(ThemeController());
 
   var isDark = Get.isDarkMode.obs;
+  Variables _var = Variables();
 
   @override
   Widget build(BuildContext context) {
@@ -108,31 +110,74 @@ class _SettingPageState extends State<SettingPage> {
                       ),
                     ],
                   )),
-              // LabelText(text: "Songs"),
-              // GlassContainer(
-              //     radius: 15,
-              //     child: Column(
-              //       children: [
-              //         ListTile(
-              //           visualDensity: VisualDensity(vertical: -4),
-              //           title: Text("Favorite songs"),
-              //           trailing: Icon(Icons.keyboard_arrow_right_outlined),
-              //         ),
-              //         Divider(),
-              //         ListTile(
-              //           visualDensity: VisualDensity(vertical: -4),
-              //           title: Text("Playlists"),
-              //           trailing: Icon(Icons.keyboard_arrow_right_outlined),
-              //         ),
-              //         Divider(),
-              //         ListTile(
-              //           visualDensity: VisualDensity(vertical: -4),
-              //           title: Text("History"),
-              //           trailing: Icon(Icons.keyboard_arrow_right_outlined),
-              //         ),
-              //       ],
-              //     )),
-              // SizedBox(height: 20),
+              LabelText(text: "Variables"),
+              GlassContainer(
+                  radius: 15,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          var control = TextEditingController();
+                          control.text = _var.jioSaavnUrl;
+                          Get.defaultDialog(
+                              title: "Edit Jio Saavn URL",
+                              content: TextField(
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                controller: control,
+                              ),
+                              actions: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (control.text.isEmpty) {
+                                      Get.snackbar(
+                                          "Error", "URL can't be empty");
+                                    } else {
+                                      // remove / from back 
+                                      _var.jioSaavnUrl = control.text
+                                          .replaceAll(RegExp(r'\/$'), '');
+                                      _var.jioSaavnUrl = control.text;
+                                      Get.back();
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: _themeController.isDark
+                                                  ? Themer.main
+                                                  : Themer.dark1,
+                                              blurRadius: 20,
+                                              offset: Offset(0, 10))
+                                        ],
+                                        gradient: _themeController.isDark
+                                            ? Themer.gradientDark
+                                            : Themer.gradientLight,
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Save",
+                                          style: Get.textTheme.bodyMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ]);
+                        },
+                        visualDensity: VisualDensity(vertical: -4),
+                        title: Text("Jio Saavn URL"),
+                        trailing: Icon(Icons.keyboard_arrow_right_outlined),
+                        subtitle: Text(_var.jioSaavnUrl),
+                      ),
+                    ],
+                  )),
+              SizedBox(height: 20),
               LabelText(text: "Storage"),
               GlassContainer(
                   radius: 15,
@@ -145,8 +190,8 @@ class _SettingPageState extends State<SettingPage> {
                               content: Text(
                                   "Are you sure you want to clear all songs from device storage?"),
                               actions: [
-
-                                    TxtButton(onPressed: (){
+                                TxtButton(
+                                    onPressed: () {
                                       GetStorage("recent_songs").erase();
                                       GetStorage("recent_songs").save();
                                       GetStorage("user").erase();
@@ -168,8 +213,8 @@ class _SettingPageState extends State<SettingPage> {
                                       GetStorage("theme").erase();
                                       GetStorage("theme").save();
                                       Get.offAll(IntroPage());
-                                    }, text: "Delete")
-                              
+                                    },
+                                    text: "Delete")
                               ]);
                         },
                         visualDensity: VisualDensity(vertical: -4),
@@ -195,7 +240,6 @@ class _SettingPageState extends State<SettingPage> {
                       "About for app and Developer",
                     ),
                   )),
-
               LabelText(text: "Appearance"),
               GlassContainer(
                   radius: 15,

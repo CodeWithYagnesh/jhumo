@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:jhumo/moduls/data/variable.dart';
 import 'package:jhumo/moduls/methods.dart';
 import 'package:jhumo/moduls/model/service.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +13,7 @@ class PlaylistController extends GetxController {
   List<Result> favSongsResults = [];
   List<dynamic> playlistName = [];
   List<Map<String, dynamic>> playlist = [];
+  Variables _var = Variables();
 
   addToPlaylist(String name, Result rs) {
     List li = playlistDataStorage.read(name) ?? [];
@@ -104,7 +106,7 @@ class PlaylistController extends GetxController {
     favSongsResults.clear();
     for (var i = 0; i < fav.length; i++) {
       var responce =
-          await http.get(Uri.parse("https://saavn.dev/api/songs/${fav[i]}"));
+          await http.get(Uri.parse("${_var.jioSaavnUrl}/api/songs/${fav[i]}"));
       SuggestedModel s = suggestedModelFromJson(responce.body);
       favSongsResults.add(s.data![0]);
     }

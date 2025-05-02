@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jhumo/main.dart';
 import 'package:jhumo/moduls/controller/collaboration_controller.dart';
+import 'package:jhumo/moduls/data/variable.dart';
 import 'package:jhumo/moduls/methods.dart';
 import 'package:jhumo/moduls/model/album_song.dart';
 import 'package:jhumo/moduls/model/lyrics_model.dart';
@@ -26,16 +27,18 @@ class AudioController extends GetxController {
   List<Result> recentSong = [];
   ConcatenatingAudioSource? playlist;
   Lyrics? lyrics;
-
+  Variables _var = Variables();
   @override
   void onInit() {
     super.onInit();
     getRecentSong();
   }
-  setLoopMode(LoopMode l){
+
+  setLoopMode(LoopMode l) {
     player.setLoopMode(l);
     update();
   }
+
   getRecentSong() async {
     _recentSongString = _recentStorage.read('recentSong') ?? [];
     _recentSongString = _recentSongString.toSet().toList();
@@ -44,11 +47,15 @@ class AudioController extends GetxController {
     }
     recentSong.clear();
     _recentSongString.forEach((id) async {
-      var response =
-          await http.get(Uri.parse("https://saavn.dev/api/songs/$id"));
-      SuggestedModel s = suggestedModelFromJson(response.body);
-      recentSong.add(s.data![0]);
-      update();
+      try {
+        var response =
+            await http.get(Uri.parse("${_var.jioSaavnUrl}/api/songs/$id"));
+        SuggestedModel s = suggestedModelFromJson(response.body);
+        recentSong.add(s.data![0]);
+        update();
+      } catch (e) {
+        print("Error in getting recent song: $e");
+      }
     });
   }
 
@@ -113,7 +120,7 @@ class AudioController extends GetxController {
   getLyrics() async {
     if (rs!.hasLyrics!) {
       var res = await http
-          .get(Uri.parse("https://saavn.dev/api/songs/${rs!.id}/lyrics"));
+          .get(Uri.parse("${_var.jioSaavnUrl}/api/songs/${rs!.id}/lyrics"));
       lyrics = lyricsFromJson(res.body);
       lyrics!.data!.lyrics = lyrics!.data!.lyrics!.replaceAll("<br>", "\n");
       update();
@@ -169,35 +176,45 @@ class AudioController extends GetxController {
       suggestedSong!.data!.clear();
       update();
     }
-    var response = await http.get(Uri.parse(
-        "https://saavn.dev/api/songs/${rs!.id}/suggestions?limit=20"));
-    if (suggestedSong == null) {
-      suggestedSong = suggestedModelFromJson(response.body);
-    } else {
-      suggestedSong!.data!.addAll(suggestedModelFromJson(response.body).data!);
+    try {
+      if (rs != null) {
+        var response = await http.get(Uri.parse(
+            "${_var.jioSaavnUrl}/api/songs/${rs!.id}/suggestions?limit=20"));
+        if (suggestedSong == null) {
+          suggestedSong = suggestedModelFromJson(response.body);
+        } else {
+          suggestedSong!.data!.addAll(
+              suggestedModelFromJson(response.body).data!);
+        }
+      }
+    } catch (e) {
+      print("Error in getting suggested song: $e");
     }
-
-    List<AudioSource> l =
-        List.generate(suggestedSong!.data!.length, (int index) {
-      return AudioSource.uri(
-          Uri.parse(
-            suggestedSong!.data![index].downloadUrl![2].url!,
-          ),
-          tag: MediaItem(
-            id: suggestedSong!.data![index].id ?? "${Random().nextInt(1000)}",
-            title: suggestedSong!.data![index].name!,
-            artist: suggestedSong!.data![index].artists!.primary != null &&
-                    suggestedSong!.data![index].artists!.primary!.isNotEmpty
-                ? suggestedSong!.data![index].artists!.primary![0].name!
-                : "",
-            artUri: Uri.parse(
-              suggestedSong!.data![index].image![1].url!,
+    List<AudioSource> l = [];
+    try {
+      l = List.generate(suggestedSong!.data!.length, (int index) {
+        return AudioSource.uri(
+            Uri.parse(
+              suggestedSong!.data![index].downloadUrl![2].url!,
             ),
-            duration: Duration(
-              seconds: suggestedSong!.data![index].duration!,
-            ),
-          ));
-    });
+            tag: MediaItem(
+              id: suggestedSong!.data![index].id ?? "${Random().nextInt(1000)}",
+              title: suggestedSong!.data![index].name!,
+              artist: suggestedSong!.data![index].artists!.primary != null &&
+                      suggestedSong!.data![index].artists!.primary!.isNotEmpty
+                  ? suggestedSong!.data![index].artists!.primary![0].name!
+                  : "",
+              artUri: Uri.parse(
+                suggestedSong!.data![index].image![1].url!,
+              ),
+              duration: Duration(
+                seconds: suggestedSong!.data![index].duration!,
+              ),
+            ));
+      });
+    } catch (e) {
+      print("Error in generating suggested song list: $e");
+    }
     List<AudioSource> ll = [
       AudioSource.uri(
           Uri.parse(

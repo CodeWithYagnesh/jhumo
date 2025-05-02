@@ -12,7 +12,7 @@ import firebase_core
 import firebase_database
 import just_audio
 import path_provider_foundation
-import sqflite
+import sqflite_darwin
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

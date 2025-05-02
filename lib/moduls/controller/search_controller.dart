@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:jhumo/moduls/data/variable.dart';
 import 'package:jhumo/moduls/model/Search_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:jhumo/moduls/methods.dart';
@@ -10,6 +11,8 @@ class SearchControl extends GetxController {
   SongService? allSongs;
   // SongService? allSongs;
   SearchControl(this.search);
+    Variables _var = Variables();
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -24,7 +27,7 @@ class SearchControl extends GetxController {
   searchAll(String s) async {
     search = s;
     var responce =
-        await http.get(Uri.parse("https://saavn.dev/api/search?query=$search"));
+        await http.get(Uri.parse("${_var.jioSaavnUrl}/api/search?query=$search&limit=100"));
     // print(responce.body);
     searchModel = searchModelFromJson(responce.body);
     // print(searchModel!.data!.toJson());
@@ -35,19 +38,19 @@ class SearchControl extends GetxController {
   searchSong(String s) async {
     search = s;
     var responce = await http
-        .get(Uri.parse("https://saavn.dev/api/search/songs?query=$search"));
+        .get(Uri.parse("${_var.jioSaavnUrl}/api/search/songs?query=$search&limit=100"));
     allSongs = serviceFromJson(responce.body);
     // allSongs!.data!.results!.toPrint;
 
     update();
-    // https://saavn.dev/api/search/songs?query=Believer
+    // ${_var.jioSaavnUrl}/api/search/songs?query=Believer
   }
 
   searchArtist(String s) async {
-    // https://saavn.dev/api/search/artists?query=Adele
+    // ${_var.jioSaavnUrl}/api/search/artists?query=Adele
     search = s;
     var responce = await http
-        .get(Uri.parse("https://saavn.dev/api/search/artists?query=$search"));
+        .get(Uri.parse("${_var.jioSaavnUrl}/api/search/artists?query=$search&limit=100"));
 
 
     update();

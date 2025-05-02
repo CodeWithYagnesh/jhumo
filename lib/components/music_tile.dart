@@ -38,12 +38,9 @@ class MusicTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: Colors.white,
-                      ),
+                    child: Icon(
+                      Icons.play_circle_fill_rounded,
+                      color: Colors.white,
                     ),
                   ),
                 ],

@@ -81,15 +81,17 @@ class IntroPage extends StatelessWidget {
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
+                          
                           color: Get.isDarkMode ? Themer.light1.withOpacity(0.5) : Themer.dark1.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(10)),
                       child: TextField(  textCapitalization: TextCapitalization.sentences,
                       maxLength: 10,
                         style: Get.textTheme.bodyMedium!.copyWith(
-                          color: Get.isDarkMode ? Themer.light : Themer.dark,
+                          color: Get.isDarkMode ? Themer.dark : Themer.light,
                         ),
                         controller: _nameController,
                         decoration: InputDecoration(
+
                             hintText: "Enter Name",
                             border: InputBorder.none,
                             hintStyle: TextStyle(color: Colors.white24)),

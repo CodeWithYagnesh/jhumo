@@ -32,6 +32,7 @@ void main() async {
   await GetStorage.init("favStorage");
   await GetStorage.init("collaboration_status");
   await GetStorage.init("playlistData");
+  await GetStorage.init("env");
   await GetStorage.init("playlistName");
   await GetStorage.init("songData");
   await GetStorage.init("theme");
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
 
     return GetMaterialApp(
       title: 'Jhumo',
-     
+      scrollBehavior: ScrollBehaviorModified(),
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: !isDark ? ThemeMode.light : ThemeMode.dark,

@@ -7,6 +7,7 @@ import 'package:jhumo/components/label.dart';
 import 'package:jhumo/components/popup_menu.dart';
 import 'package:jhumo/moduls/controller/playlist_controller.dart';
 import 'package:jhumo/moduls/controller/search_controller.dart';
+import 'package:jhumo/moduls/data/variable.dart';
 import 'package:jhumo/moduls/methods.dart';
 import 'package:jhumo/moduls/model/Search_model.dart';
 import 'package:jhumo/moduls/model/album_song.dart';
@@ -28,6 +29,8 @@ class SearchPage extends StatelessWidget {
       text: "Songs",
     ),
   ];
+    Variables _var = Variables();
+
   var _controller = TextEditingController();
   var searchcontroller = Get.put(SearchControl(""));
   @override
@@ -93,7 +96,7 @@ class SearchPage extends StatelessWidget {
                           return ListTile(
                             onTap: () async {
                               var response = await get(Uri.parse(
-                                  "https://saavn.dev/api/songs/${searchcontroller.searchModel!.data!.songs!.results![i].id}"));
+                                  "${_var.jioSaavnUrl}/api/songs/${searchcontroller.searchModel!.data!.songs!.results![i].id}"));
                               SuggestedModel s =
                                   suggestedModelFromJson(response.body);
                               Result rs = s.data![0];
@@ -157,7 +160,7 @@ class SearchPage extends StatelessWidget {
                         ListTile(
                           onTap: () async {
                             var res = await get(Uri.parse(
-                                "https://saavn.dev/api/albums?id=${searchcontroller.searchModel!.data!.albums!.results![i].id}"));
+                                "${_var.jioSaavnUrl}/api/albums?id=${searchcontroller.searchModel!.data!.albums!.results![i].id}"));
                             AlbumSong al = albumSongFromJson(res.body);
                             Get.to(OpenedAlbumPage(
                                 al: al,
@@ -219,7 +222,7 @@ class SearchPage extends StatelessWidget {
                         ListTile(
                           onTap: () async {
                             var res = await get(Uri.parse(
-                                "https://saavn.dev/api/artists?id=${searchcontroller.searchModel!.data!.artists!.results![i].id}"));
+                                "${_var.jioSaavnUrl}/api/artists?id=${searchcontroller.searchModel!.data!.artists!.results![i].id}"));
                             ArtistGetData art = artistGetDataFromJson(res.body);
                             Get.to(OpenedArtistPage(
                                 art: art,
@@ -283,7 +286,7 @@ class SearchPage extends StatelessWidget {
                             "Hello ${searchcontroller.searchModel!.data!.playlists!.results![i].id}"
                                 .toPrint;
                             await get(Uri.parse(
-                                    "https://saavn.dev/api/playlists?id=${searchcontroller.searchModel!.data!.playlists!.results![i].id}&limit=100"))
+                                    "${_var.jioSaavnUrl}/api/playlists?id=${searchcontroller.searchModel!.data!.playlists!.results![i].id}&limit=100"))
                                 .then((res) {
                               PlaylistsSong ps =
                                   playlistsSongFromJson(res.body);

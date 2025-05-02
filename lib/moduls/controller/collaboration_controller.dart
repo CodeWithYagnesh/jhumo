@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 import 'package:jhumo/main.dart';
 import 'package:jhumo/moduls/controller/audio_controller.dart';
+import 'package:jhumo/moduls/data/variable.dart';
 import 'package:jhumo/moduls/methods.dart';
 import 'package:jhumo/moduls/model/collaboration_model.dart';
 import 'package:jhumo/moduls/model/service.dart';
@@ -23,6 +24,8 @@ class CollaborationController extends GetxController {
   var _audioController = Get.put(AudioController());
   StreamSubscription<DatabaseEvent>? autoSync;
   String? code;
+  Variables _var = Variables();
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -49,7 +52,7 @@ class CollaborationController extends GetxController {
     if (_audioController.rs == null ||
         (_audioController.rs != null && c.songId != _audioController.rs!.id)) {
       var response =
-          await get(Uri.parse("https://saavn.dev/api/songs/${c.songId}"));
+          await get(Uri.parse("${_var.jioSaavnUrl}/api/songs/${c.songId}"));
       SuggestedModel s = suggestedModelFromJson(response.body);
       Result rs = s.data![0];
 
@@ -83,7 +86,7 @@ class CollaborationController extends GetxController {
             (_audioController.rs != null &&
                 c.songId != _audioController.rs!.id)) {
           var response =
-              await get(Uri.parse("https://saavn.dev/api/songs/${c.songId}"));
+              await get(Uri.parse("${_var.jioSaavnUrl}/api/songs/${c.songId}"));
           SuggestedModel s = suggestedModelFromJson(response.body);
           Result rs = s.data![0];
 

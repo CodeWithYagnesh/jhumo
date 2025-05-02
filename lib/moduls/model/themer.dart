@@ -35,8 +35,25 @@ final ThemeData lightTheme = ThemeData(
       seedColor: Themer.main, brightness: Brightness.light),
   useMaterial3: true,
 );
+
+class ScrollBehaviorModified extends ScrollBehavior {
+  const ScrollBehaviorModified();
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    switch (getPlatform(context)) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+      case TargetPlatform.android:
+        return const BouncingScrollPhysics();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+        return const ClampingScrollPhysics();
+    }
+  }
+}
+
 final ThemeData darkTheme = ThemeData(
- 
   popupMenuTheme: PopupMenuThemeData(
       // color: Colors.transparent,
       elevation: 10,

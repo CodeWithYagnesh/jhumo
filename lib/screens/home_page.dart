@@ -100,6 +100,7 @@ class HomePage extends StatelessWidget {
                       ),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
                         padding: EdgeInsets.only(left: 20,right: 20),
                         child: GlassContainer(
                           child: Container(

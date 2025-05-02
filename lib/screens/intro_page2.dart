@@ -122,7 +122,7 @@ class IntroPage2 extends StatelessWidget {
                                 // style:
                                 //     TextStyle(color: Colors.white, fontSize: 17),
                                 value: selectedLanguage.value,
-                                dropdownColor: Colors.black45,
+                                dropdownColor: Colors.white,
                                 underline: SizedBox(),
                                 icon: Icon(
                                   Icons.keyboard_arrow_down,

@@ -229,6 +229,7 @@ class PlayerPage extends StatelessWidget {
                         children: [
                           SafeArea(
                             child: SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 clipBehavior: Clip.hardEdge,
