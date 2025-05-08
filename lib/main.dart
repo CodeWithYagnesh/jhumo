@@ -62,7 +62,6 @@ class MyApp extends StatelessWidget {
       darkTheme: darkTheme,
       themeMode: !isDark ? ThemeMode.light : ThemeMode.dark,
       debugShowCheckedModeBanner: false,
-
       home: name == ""
           ? IntroPage()
           : (lang == "")
