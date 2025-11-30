@@ -10,7 +10,7 @@ class Variables {
     "Motivated"
   ];
   Variables() {
-    _jioSaavnUrl = GetStorage("env").read("URL") ?? "https://saavn.dev";
+    _jioSaavnUrl = GetStorage("env").read("URL") ?? "https://jiosavan-api2.vercel.app";
     _strs = GetStorage("env").read("strs") ?? _strs;
   }
 
