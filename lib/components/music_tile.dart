@@ -26,8 +26,9 @@ class MusicTile extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   image: DecorationImage(
                       image: NetworkImage(
-                        rs.image![1].url!,
-                      ),
+                          rs.image != null && rs.image!.length > 1
+                              ? rs.image![1].url ?? ''
+                              : 'https://placeholder.com/image.png'),
                       fit: BoxFit.cover)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -48,12 +49,12 @@ class MusicTile extends StatelessWidget {
             ),
           )),
           Text(
-            rs.name!,
+            rs.name ?? '',
             overflow: TextOverflow.ellipsis,
             style: Get.textTheme.titleMedium,
           ),
           Text(
-            rs.artists!.all![0].name!,
+          rs.artists!.all!=null ? rs.artists!.all!.first.name ?? '' : '',
             overflow: TextOverflow.ellipsis,
             style: Get.textTheme.titleSmall,
           ),

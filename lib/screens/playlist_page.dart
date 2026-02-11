@@ -88,7 +88,7 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             songIds.length,
                                             (i) => controller
                                                 .getSongById(songIds[i]));
-                            
+
                                         Get.put(AudioController())
                                             .setMusicList(results);
                                         Get.to(
@@ -257,7 +257,6 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               child: RecentMusicTile(
                                 rs: controller.getSongById(
                                     controller.getPlaylistById(name)[i]),
-                                playlistName: name,
                               ),
                             );
                           })

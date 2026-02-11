@@ -155,7 +155,7 @@ class _MainPageState extends State<MainPage> {
                                       ),
                                       // height: 70,
                                       child: BackdropFilter(
-                                      
+
                                         filter: ImageFilter.blur(
                                             sigmaX: 20, sigmaY: 20),
                                         child: Stack(
@@ -173,7 +173,7 @@ class _MainPageState extends State<MainPage> {
                                                   ])),
                                               child: ListTile(
                                                 title: Text(
-                                                  _audioController.rs!.name!,
+                                                  _audioController.rs!.name ?? "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(
@@ -183,7 +183,7 @@ class _MainPageState extends State<MainPage> {
                                                           FontWeight.bold),
                                                 ),
                                                 subtitle: Text(
-                                                  _audioController.rs!.label!,
+                                                  _audioController.rs!.label ?? "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(

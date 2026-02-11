@@ -101,7 +101,7 @@ class HomePage extends StatelessWidget {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(left: 20,right: 20),
+                        padding: EdgeInsets.only(left: 20, right: 20),
                         child: GlassContainer(
                           child: Container(
                             height: Get.height * 0.36,
@@ -115,7 +115,9 @@ class HomePage extends StatelessWidget {
                                             crossAxisCount: 4,
                                             childAspectRatio: 1 / 5),
                                     itemCount:
-                                        audioController.recentSong.length <=20 ? audioController.recentSong.length: 20,
+                                        audioController.recentSong.length <= 20
+                                            ? audioController.recentSong.length
+                                            : 20,
                                     scrollDirection: Axis.horizontal,
                                     shrinkWrap: true,
                                     itemBuilder: (context, index) {
@@ -163,17 +165,17 @@ class HomePage extends StatelessWidget {
                             scrollDirection: Axis.horizontal,
                             physics: BouncingScrollPhysics(),
                             itemBuilder: (context, index) {
+                              // Get a safe reference to the result
+                              var result = _.ss[i].data?.results?[index];
+
+                              if (result == null) return const SizedBox();
+
                               return GestureDetector(
                                 onTap: () {
-                                  Get.to(
-                                      PlayerPage(
-                                        result: _.ss[i].data!.results![index],
-                                      ),
+                                  Get.to(PlayerPage(result: result),
                                       transition: Transition.downToUp);
                                 },
-                                child: MusicTile(
-                                  rs: _.ss[i].data!.results![index],
-                                ),
+                                child: MusicTile(rs: result),
                               );
                             }),
                       ),

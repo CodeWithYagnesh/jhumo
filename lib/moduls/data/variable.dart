@@ -1,7 +1,7 @@
 import 'package:get_storage/get_storage.dart';
 
 class Variables {
-  String _jioSaavnUrl = "";
+
   List<String> _strs = [
     "Gujarati",
     "Romantic",
@@ -10,7 +10,7 @@ class Variables {
     "Motivated"
   ];
   Variables() {
-    _jioSaavnUrl = GetStorage("env").read("URL") ?? "https://jiosavan-api2.vercel.app";
+
     _strs = GetStorage("env").read("strs") ?? _strs;
   }
 
@@ -23,12 +23,7 @@ class Variables {
     GetStorage("env").write("strs", strs);
   }
 
-  set jioSaavnUrl(String url) {
-    _jioSaavnUrl = url;
-    GetStorage("env").write("URL", url);
-  }
 
-  String get jioSaavnUrl {
-    return _jioSaavnUrl;
-  }
+
+
 }

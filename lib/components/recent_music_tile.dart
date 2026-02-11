@@ -1,65 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jhumo/components/popup_menu.dart';
-import 'package:jhumo/moduls/controller/playlist_controller.dart';
 import 'package:jhumo/moduls/model/service.dart';
 import 'package:jhumo/moduls/model/themer.dart';
 
 class RecentMusicTile extends StatelessWidget {
   final Result rs;
   final bool isPlayed;
-  final String? playlistName;
-  RecentMusicTile({super.key, required this.rs, this.isPlayed = false, this.playlistName});
-  format(Duration d) {
-    return d.toString().split('.').first.padLeft(8, "0").substring(4);
-  }
 
-  var _playlistController = Get.put(PlaylistController());
+  const RecentMusicTile({super.key, required this.rs, this.isPlayed = false});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // width: 200,
-      // margin: EdgeInsets.symmetric(horizontal: 5),
-      child: ListTile(
-        // contentPadding: EdgeInsets.zero,
-        leading: Hero(
-          tag: rs,
-          child: Container(
-              child: isPlayed
-                  ? Container(
-                      color: Colors.black.withOpacity(0.5),
-                      child: Icon(Icons.play_arrow,color: Themer.light,),
-                    )
-                  : null,
-              height: 50,
-              width: 50,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                    image: NetworkImage(rs.image![0].url!), fit: BoxFit.cover),
-              )),
-        ),
-        title: Text(
-          rs.name!,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Row(
-          children: [
-            // Text(
+    // SAFE IMAGE LOGIC
+    String imageUrl = "https://c.saavncdn.com/191/Kesariya-From-Brahmastra-Hindi-2022-20220717092820-500x500.jpg";
+    if (rs.image != null && rs.image!.isNotEmpty) {
+      // Try to get the last image (usually best quality), otherwise first
+      imageUrl = rs.image!.last.url ?? rs.image!.first.url ?? imageUrl;
+    }
 
-            //     "${Duration(seconds: rs.duration!).inMinutes}:${Duration(seconds: rs.duration!).inSeconds.remainder(60)}"),
-            Text(format(Duration(seconds: rs.duration!))),
-            SizedBox(width: 5),
-            Expanded(
-                child: Text(
-              "${rs.artists!.all![0].name}",
-            )),
-          ],
-        ),
-        trailing: JhumoPopupMenu(rs: rs,playlistName: playlistName,)
-        // trailing: GestureDetector(onTap: () {}, child: Icon(Icons.more_vert)),
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+          color: isPlayed ? Themer.main.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(15)),
+      child: Row(
+        children: [
+          Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover)),
+          ),
+          SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  rs.name ?? "Unknown Title",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Get.textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isPlayed ? Themer.main : null),
+                ),
+                Text(
+                  (rs.artists?.primary != null && rs.artists!.primary!.isNotEmpty)
+                      ? rs.artists!.primary![0].name ?? "Unknown Artist"
+                      : "Unknown Artist",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Get.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+          if (isPlayed) Icon(Icons.graphic_eq, color: Themer.main)
+        ],
       ),
     );
   }

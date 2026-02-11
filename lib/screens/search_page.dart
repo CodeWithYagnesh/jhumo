@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
+
 import 'package:jhumo/components/label.dart';
 import 'package:jhumo/components/popup_menu.dart';
 import 'package:jhumo/moduls/controller/playlist_controller.dart';
 import 'package:jhumo/moduls/controller/search_controller.dart';
-import 'package:jhumo/moduls/data/variable.dart';
+import 'package:jhumo/moduls/service/youtube_service.dart';
 import 'package:jhumo/moduls/methods.dart';
 import 'package:jhumo/moduls/model/Search_model.dart';
 import 'package:jhumo/moduls/model/album_song.dart';
@@ -29,7 +29,7 @@ class SearchPage extends StatelessWidget {
       text: "Songs",
     ),
   ];
-    Variables _var = Variables();
+
 
   var _controller = TextEditingController();
   var searchcontroller = Get.put(SearchControl(""));
@@ -94,16 +94,14 @@ class SearchPage extends StatelessWidget {
                           i++) ...[
                         Builder(builder: (context) {
                           return ListTile(
-                            onTap: () async {
-                              var response = await get(Uri.parse(
-                                  "${_var.jioSaavnUrl}/api/songs/${searchcontroller.searchModel!.data!.songs!.results![i].id}"));
-                              SuggestedModel s =
-                                  suggestedModelFromJson(response.body);
-                              Result rs = s.data![0];
-
-                              Get.to(() => PlayerPage(result: rs),
-                                  transition: Transition.downToUp);
-                            },
+                              onTap: () async {
+                                var id = searchcontroller.searchModel!.data!.songs!.results![i].id;
+                                var song = await YoutubeService().getSong(id!);
+                                if (song != null) {
+                                  Get.to(() => PlayerPage(result: song),
+                                      transition: Transition.downToUp);
+                                }
+                              },
                             contentPadding: EdgeInsets.zero,
                             leading: Container(
                                 height: 50,
@@ -159,13 +157,7 @@ class SearchPage extends StatelessWidget {
                           i++) ...[
                         ListTile(
                           onTap: () async {
-                            var res = await get(Uri.parse(
-                                "${_var.jioSaavnUrl}/api/albums?id=${searchcontroller.searchModel!.data!.albums!.results![i].id}"));
-                            AlbumSong al = albumSongFromJson(res.body);
-                            Get.to(OpenedAlbumPage(
-                                al: al,
-                                r: searchcontroller
-                                    .searchModel!.data!.albums!.results![i]));
+                            // Albums not supported yet
                           },
                           contentPadding: EdgeInsets.zero,
                           leading: Container(
@@ -221,13 +213,7 @@ class SearchPage extends StatelessWidget {
                           i++) ...[
                         ListTile(
                           onTap: () async {
-                            var res = await get(Uri.parse(
-                                "${_var.jioSaavnUrl}/api/artists?id=${searchcontroller.searchModel!.data!.artists!.results![i].id}"));
-                            ArtistGetData art = artistGetDataFromJson(res.body);
-                            Get.to(OpenedArtistPage(
-                                art: art,
-                                r: searchcontroller
-                                    .searchModel!.data!.artists!.results![i]));
+                            // Artists not supported yet
                           },
                           contentPadding: EdgeInsets.zero,
                           leading: Container(
@@ -283,24 +269,7 @@ class SearchPage extends StatelessWidget {
                           i++) ...[
                         ListTile(
                           onTap: () async {
-                            "Hello ${searchcontroller.searchModel!.data!.playlists!.results![i].id}"
-                                .toPrint;
-                            await get(Uri.parse(
-                                    "${_var.jioSaavnUrl}/api/playlists?id=${searchcontroller.searchModel!.data!.playlists!.results![i].id}&limit=100"))
-                                .then((res) {
-                              PlaylistsSong ps =
-                                  playlistsSongFromJson(res.body);
-                              ps.toJson().toPrint;
-                              Get.to(OpenedPlaylistPage(
-                                r: searchcontroller
-                                    .searchModel!.data!.playlists!.results![i],
-                                pl: ps,
-                              ));
-                            }).onError(
-                              (error, stackTrace) {
-                                error!.toPrint;
-                              },
-                            );
+                            // Playlists not supported yet
                           },
                           contentPadding: EdgeInsets.zero,
                           leading: Container(

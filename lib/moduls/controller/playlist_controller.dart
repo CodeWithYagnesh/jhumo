@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:jhumo/moduls/data/variable.dart';
 import 'package:jhumo/moduls/methods.dart';
 import 'package:jhumo/moduls/model/service.dart';
-import 'package:http/http.dart' as http;
+import 'package:jhumo/moduls/service/youtube_service.dart';
 
 class PlaylistController extends GetxController {
   GetStorage favoriteStorage = GetStorage("favStorage");
@@ -13,7 +13,7 @@ class PlaylistController extends GetxController {
   List<Result> favSongsResults = [];
   List<dynamic> playlistName = [];
   List<Map<String, dynamic>> playlist = [];
-  Variables _var = Variables();
+  YoutubeService _ytService = YoutubeService();
 
   addToPlaylist(String name, Result rs) {
     List li = playlistDataStorage.read(name) ?? [];
@@ -105,10 +105,10 @@ class PlaylistController extends GetxController {
     List fav = favoriteStorage.read("fav") ?? [];
     favSongsResults.clear();
     for (var i = 0; i < fav.length; i++) {
-      var responce =
-          await http.get(Uri.parse("${_var.jioSaavnUrl}/api/songs/${fav[i]}"));
-      SuggestedModel s = suggestedModelFromJson(responce.body);
-      favSongsResults.add(s.data![0]);
+      var song = await _ytService.getSong(fav[i]);
+      if (song != null) {
+        favSongsResults.add(song);
+      }
     }
     update();
   }

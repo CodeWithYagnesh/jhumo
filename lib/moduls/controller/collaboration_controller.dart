@@ -5,13 +5,12 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart';
+
 import 'package:jhumo/main.dart';
 import 'package:jhumo/moduls/controller/audio_controller.dart';
-import 'package:jhumo/moduls/data/variable.dart';
-import 'package:jhumo/moduls/methods.dart';
 import 'package:jhumo/moduls/model/collaboration_model.dart';
 import 'package:jhumo/moduls/model/service.dart';
+import 'package:jhumo/moduls/service/youtube_service.dart';
 import 'package:jhumo/screens/player_page.dart';
 
 class CollaborationController extends GetxController {
@@ -24,7 +23,7 @@ class CollaborationController extends GetxController {
   var _audioController = Get.put(AudioController());
   StreamSubscription<DatabaseEvent>? autoSync;
   String? code;
-  Variables _var = Variables();
+  YoutubeService _ytService = YoutubeService();
 
   @override
   void onInit() {
@@ -51,14 +50,12 @@ class CollaborationController extends GetxController {
 
     if (_audioController.rs == null ||
         (_audioController.rs != null && c.songId != _audioController.rs!.id)) {
-      var response =
-          await get(Uri.parse("${_var.jioSaavnUrl}/api/songs/${c.songId}"));
-      SuggestedModel s = suggestedModelFromJson(response.body);
-      Result rs = s.data![0];
-
-      Get.to(() => PlayerPage(result: rs), transition: Transition.downToUp);
-      player.seek(c.duration);
-      return;
+      var song = await _ytService.getSong(c.songId!);
+      if (song != null) {
+        Get.to(() => PlayerPage(result: song), transition: Transition.downToUp);
+        player.seek(c.duration);
+        return;
+      }
     }
     if (_audioController.rs != null) {
       player.seek(c.duration);
@@ -85,13 +82,12 @@ class CollaborationController extends GetxController {
         if (_audioController.rs == null ||
             (_audioController.rs != null &&
                 c.songId != _audioController.rs!.id)) {
-          var response =
-              await get(Uri.parse("${_var.jioSaavnUrl}/api/songs/${c.songId}"));
-          SuggestedModel s = suggestedModelFromJson(response.body);
-          Result rs = s.data![0];
-
-          Get.to(() => PlayerPage(result: rs), transition: Transition.downToUp);
-          return;
+          var song = await _ytService.getSong(c.songId!);
+          if (song != null) {
+            Get.to(() => PlayerPage(result: song),
+                transition: Transition.downToUp);
+            return;
+          }
         }
         // if (_audioController.rs != null) {
         //   return;
