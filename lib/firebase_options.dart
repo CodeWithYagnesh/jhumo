@@ -3,7 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
-import 'package:jhumo/moduls/methods.dart';
+
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -17,7 +17,7 @@ import 'package:jhumo/moduls/methods.dart';
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    kIsWeb.toPrint;
+
     if (kIsWeb) {
       return web;
     }

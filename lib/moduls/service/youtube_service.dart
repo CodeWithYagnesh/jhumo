@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:jhumo/moduls/model/service.dart';
-import 'package:jhumo/moduls/model/Search_model.dart' as sm;
+
+
+// ... (existing helper methods)
 
 class YoutubeService {
   static final YoutubeService _instance = YoutubeService._internal();
@@ -46,13 +49,44 @@ class YoutubeService {
     }
   }
 
-  Future<AudioStreamInfo> getAudioStreamInfo(String videoId) async {
+  Future<StreamInfo> getAudioStreamInfo(String videoId) async {
     var manifest = await _yt.videos.streamsClient.getManifest(videoId);
+    // Try Muxed first (more reliable against 403s)
+    var muxedStreams = manifest.muxed.sortByVideoQuality();
+    if (muxedStreams.isNotEmpty) {
+      return muxedStreams.first; // Lowest quality video with audio
+    }
+    // Fallback to audio only
     return manifest.audioOnly.withHighestBitrate();
   }
 
-  Future<Stream<List<int>>> getStream(AudioStreamInfo info) async {
-    return _yt.videos.streamsClient.get(info);
+  Future<Stream<List<int>>> getStream(StreamInfo info, {int? start, int? end}) async {
+    // Standard YoutubeExplode get() doesn't support start/end efficiently for seeking
+    // So we use a direct HTTP request with Range header.
+
+    var client = http.Client();
+    var request = http.Request('GET', Uri.parse(info.url.toString()));
+
+    if (start != null || end != null) {
+      String range = 'bytes=${start ?? 0}-${end ?? ""}';
+      request.headers['Range'] = range;
+      print("YoutubeService: Requesting Range: $range");
+    }
+
+    try {
+      var response = await client.send(request);
+
+      if (response.statusCode == 200 || response.statusCode == 206) {
+        return response.stream;
+      } else {
+        print("YoutubeService: HTTP ${response.statusCode} for stream");
+         // Fallback to library getter if direct fail (though library might not seek)
+        return _yt.videos.streamsClient.get(info);
+      }
+    } catch (e) {
+      print("YoutubeService: Error fetching stream with range: $e");
+      return _yt.videos.streamsClient.get(info);
+    }
   }
 
   Future<String?> getAudioUrl(String videoId) async {

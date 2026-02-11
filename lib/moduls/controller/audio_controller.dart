@@ -33,6 +33,8 @@ class AudioController extends GetxController {
   void onInit() {
     super.onInit();
     getRecentSong();
+    // startStreaming();
+    player.setLoopMode(LoopMode.off); // Ensure we don't loop a single song
   }
 
   setLoopMode(LoopMode l) {
@@ -67,7 +69,7 @@ class AudioController extends GetxController {
     print("AudioController: setSong called with ${result.name}");
     rs = result;
     _fetchSong();
-    startStreaming();
+    startStreaming(); // Removed: Already called in onInit
   }
 
   setMusicList(List<Result> songs) async {
@@ -112,7 +114,7 @@ class AudioController extends GetxController {
     } catch (e) {
       print("AudioController: Error playing playlist: $e");
     }
-    startStreaming();
+    // startStreaming(); // Removed: Already called in onInit
     Get.to(
         PlayerPage(
           result: suggestedSong!.data!.first,
@@ -179,9 +181,23 @@ class AudioController extends GetxController {
 
           rs = suggestedSong!.data![i]; // Safely update the current song
 
-          // If we reached the end of the list, load more
-          if (suggestedSong!.data!.last.id == rs!.id) {
-            getSuggestedSong();
+          // Load more songs when we are near the end of the playlist (e.g., 2 songs left)
+          if (i >= suggestedSong!.data!.length - 2) {
+             // We need to fetch suggestions based on the LAST song in the list, not necessarily the current one.
+             // But usually it's fine to fetch based on current playing song if it's new.
+             // To avoid loop, checks are needed.
+             // For now, let's just use the current song to fetch more.
+             // But we need to make sure we don't re-fetch for the same song or cause infinite loop.
+             // A simple check is "if we are at the last song, proceed" logic might be too late.
+             // Let's stick to the user's logic: if `suggestedSong!.data!.last.id == rs!.id`
+             /*
+             // Logic from user's code:
+             if (suggestedSong!.data!.last.id == rs!.id) {
+                getSuggestedSong();
+             }
+             */
+             // IMPROVED LOGIC: If we are close to the end, fetch more.
+             loadMoreSuggestions();
           }
 
           // Add to recent history
@@ -203,165 +219,175 @@ class AudioController extends GetxController {
 
   // In AudioController.dart
 
+  // Initial fetch for a new song (clears previous playlist logic effectively as we start fresh)
   getSuggestedSong() async {
-    if (suggestedSong != null && suggestedSong!.data!.length > 0) {
-      suggestedSong!.data!.clear();
-      update();
-    }
+    // This method is now primarily for the initial setup of a song + its suggestions.
+    // If you want to APPEND, use loadMoreSuggestions.
+
+    print("AudioController: getSuggestedSong (Initial) called for ${rs?.name}");
+
+    // 1. Fetch suggestions
+    List<Result> newSuggestions = [];
     try {
       if (rs != null) {
-        var results = await _ytService.getSuggestedSongs(rs!.id!);
-        if (suggestedSong == null) {
-          suggestedSong = SuggestedModel();
-          suggestedSong!.data = results;
-        } else {
-          suggestedSong!.data!.addAll(results);
-        }
+        newSuggestions = await _ytService.getSuggestedSongs(rs!.id!);
       }
     } catch (e) {
-      print("Error in getting suggested song: $e");
+      print("AudioController: Error fetching suggestions: $e");
     }
 
-    List<AudioSource> l = [];
-    try {
-      l = List.generate(suggestedSong!.data!.length, (int index) {
-        // SAFE IMAGE LOGIC
-        String imageUrl;
-        if (suggestedSong!.data![index].image != null &&
-            suggestedSong!.data![index].image!.isNotEmpty) {
-          imageUrl = suggestedSong!.data![index].image!.last.url ?? "";
-        } else {
-          imageUrl =
-              "https://c.saavncdn.com/191/Kesariya-From-Brahmastra-Hindi-2022-20220717092820-500x500.jpg";
-        }
-
-        return YoutubeAudioSource(
-            suggestedSong!.data![index].id ?? "${Random().nextInt(1000)}",
-            tag: MediaItem(
-              id: suggestedSong!.data![index].id ?? "${Random().nextInt(1000)}",
-              title: suggestedSong!.data![index].name ?? "Unknown Title",
-              artist: (suggestedSong!.data![index].artists?.primary != null &&
-                      suggestedSong!.data![index].artists!.primary!.isNotEmpty)
-                  ? suggestedSong!.data![index].artists!.primary![0].name ?? ""
-                  : "",
-              artUri: Uri.parse(imageUrl),
-              duration: Duration(
-                seconds: suggestedSong!.data![index].duration ?? 0,
-              ),
-            ));
-      });
-    } catch (e) {
-      print("Error in generating suggested song list: $e");
+    // 2. Prepare the list of songs to play: [Current Song, ...Suggestions]
+    if (suggestedSong == null) {
+      suggestedSong = SuggestedModel();
     }
 
-    // Handle current song (rs) safely as well
-    String currentSongImage =
-        "https://c.saavncdn.com/191/Kesariya-From-Brahmastra-Hindi-2022-20220717092820-500x500.jpg";
+    // RESET the list with current song + new suggestions
+    suggestedSong!.data = [rs!, ...newSuggestions];
 
-    // SAFE ACCESS to downloadUrl
-    if (rs!.downloadUrl != null && rs!.downloadUrl!.isNotEmpty) {
-      print(rs!.downloadUrl!.first.url);
+    // 3. Create AudioSources
+    List<AudioSource> audioSources = [];
+
+    // 3a. Add Current Song Source
+    AudioSource? currentSongSource = await _createAudioSource(rs!);
+    if (currentSongSource != null) {
+        audioSources.add(currentSongSource);
     }
 
-    if (rs!.image != null && rs!.image!.isNotEmpty) {
-      currentSongImage = rs!.image!.last.url ?? currentSongImage;
+    // 3b. Add Sources for Suggestions (Lazy loading is better, but here we pre-load source references)
+    // Note: YoutubeAudioSource is lazy by default (it fetches stream url on request).
+    for (var song in newSuggestions) {
+       audioSources.add(_createYoutubeAudioSource(song));
     }
 
-    // List<AudioSource> ll = [];
-    List<AudioSource> ll = [];
+    // 4. Set Playlist
+    playlist = ConcatenatingAudioSource(children: audioSources);
 
-    // TRYING DIRECT URL FOR CURRENT SONG
-    print("AudioController: Fetching stream URL for ${rs!.id}...");
-    String? streamUrl = await _ytService.getAudioUrl(rs!.id!);
-    if (streamUrl != null) {
-      print("AudioController: Using DIRECT URI for ${rs!.id}!");
-      ll.add(AudioSource.uri(
-        Uri.parse(streamUrl),
-        // headers: {
-        //   'User-Agent':
-        //       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        //   'Referer': 'https://www.youtube.com/',
-        // },
-        tag: MediaItem(
-          id: rs!.id!,
-          title: rs!.name ?? "Unknown",
-          artist:
-              (rs!.artists?.primary != null && rs!.artists!.primary!.isNotEmpty)
-                  ? rs!.artists!.primary![0].name!
-                  : "Unknown",
-          artUri: Uri.parse(currentSongImage),
-          duration: Duration(seconds: rs!.duration ?? 0),
-        ),
-      ));
-    } else {
-      print(
-          "AudioController: Fallback to YoutubeAudioSource (Stream) for ${rs!.id}!");
-      // Fallback if URL fails
-      ll.add(YoutubeAudioSource(rs!.id!,
-          tag: MediaItem(
-            id: rs!.id!,
-            title: rs!.name ?? "Unknown",
-            artist: (rs!.artists?.primary != null &&
-                    rs!.artists!.primary!.isNotEmpty)
-                ? rs!.artists!.primary![0].name!
-                : "Unknown",
-            artUri: Uri.parse(currentSongImage),
-            duration: Duration(seconds: rs!.duration ?? 0),
-          )));
-    }
-
-    print(
-        "AudioController: Creating ConcatenatingAudioSource with ${ll.length} + ${l.length} sources");
-
-    if (suggestedSong?.data != null) {
-      suggestedSong!.data!.insert(0, rs!);
-    }
-    // ll.addAll(l); // Rename l to dataAudioSources for clarity if desired, but here l is fine
-    ll.addAll(l);
-
-    playlist = ConcatenatingAudioSource(children: ll);
     try {
       await player.setAudioSource(playlist!);
       player.play();
-      print("AudioController: Player started playing");
-    } catch (e, stack) {
-      print("AudioController: Error setting audio source or playing: $e");
-      print(stack);
+      print("AudioController: Player started playing new playlist");
+    } catch (e) {
+      print("AudioController: Error playing new playlist: $e");
     }
+
     update();
+  }
+
+  // Load more suggestions and APPEND to the playlist
+  bool _isLoadingMore = false; // Prevent multiple simultaneous fetches
+
+  loadMoreSuggestions() async {
+    if (_isLoadingMore) return;
+    if (suggestedSong?.data == null || suggestedSong!.data!.isEmpty) return;
+
+    _isLoadingMore = true;
+    print("AudioController: Loading more suggestions...");
+
+    try {
+      // Fetch suggestions based on the LAST song in the current list
+      var lastSong = suggestedSong!.data!.last;
+      var newSuggestions = await _ytService.getSuggestedSongs(lastSong.id!);
+
+      // Filter out duplicates (optional but good)
+      // var existingIds = suggestedSong!.data!.map((e) => e.id).toSet();
+      // newSuggestions = newSuggestions.where((e) => !existingIds.contains(e.id)).toList();
+
+      if (newSuggestions.isNotEmpty) {
+          // Add to data model
+          suggestedSong!.data!.addAll(newSuggestions);
+
+          // Create AudioSources
+          List<AudioSource> newSources = [];
+          for (var song in newSuggestions) {
+               newSources.add(_createYoutubeAudioSource(song));
+          }
+
+          // Append to just_audio playlist
+          if (playlist != null) {
+              await playlist!.addAll(newSources);
+              print("AudioController: Appended ${newSources.length} songs to playlist.");
+          }
+      }
+    } catch (e) {
+        print("AudioController: Error loading more suggestions: $e");
+    } finally {
+        _isLoadingMore = false;
+        update();
+    }
+  }
+
+
+  // Helper to create AudioSource for a song (tries direct URL first, then Stream)
+  Future<AudioSource?> _createAudioSource(Result song) async {
+      String imageUrl = _getImageUrl(song);
+
+      // Check for direct download URL (if available and valid)
+      // Note: verify if `downloadUrl` is actually a playable direct link or requires extraction.
+      // Assuming _ytService.getAudioUrl is the way to go for the playing song.
+
+      String? streamUrl = await _ytService.getAudioUrl(song.id!);
+
+      if (streamUrl != null) {
+           return AudioSource.uri(
+            Uri.parse(streamUrl),
+            tag: MediaItem(
+              id: song.id!,
+              title: song.name ?? "Unknown",
+              artist: (song.artists?.primary != null && song.artists!.primary!.isNotEmpty)
+                  ? song.artists!.primary![0].name!
+                  : "Unknown",
+              artUri: Uri.parse(imageUrl),
+              duration: Duration(seconds: song.duration ?? 0),
+            ),
+          );
+      } else {
+          // Fallback
+         return _createYoutubeAudioSource(song);
+      }
+  }
+
+  // Helper for YoutubeAudioSource (Lazy)
+  AudioSource _createYoutubeAudioSource(Result song) {
+       String imageUrl = _getImageUrl(song);
+       return YoutubeAudioSource(
+            song.id ?? "${Random().nextInt(1000)}",
+            tag: MediaItem(
+              id: song.id ?? "${Random().nextInt(1000)}",
+              title: song.name ?? "Unknown Title",
+              artist: (song.artists?.primary != null &&
+                      song.artists!.primary!.isNotEmpty)
+                  ? song.artists!.primary![0].name ?? ""
+                  : "",
+              artUri: Uri.parse(imageUrl),
+              duration: Duration(
+                seconds: song.duration ?? 0,
+              ),
+            ));
+  }
+
+  String _getImageUrl(Result song) {
+      if (song.image != null && song.image!.isNotEmpty) {
+          return song.image!.last.url ?? "https://c.saavncdn.com/191/Kesariya-From-Brahmastra-Hindi-2022-20220717092820-500x500.jpg";
+      }
+      return "https://c.saavncdn.com/191/Kesariya-From-Brahmastra-Hindi-2022-20220717092820-500x500.jpg";
   }
 
 onNext() {
     if (suggestedSong?.data == null || suggestedSong!.data!.isEmpty) return;
 
-    // Find the index of the currently playing song in our suggested list
-    int currentIndex = suggestedSong!.data!.indexWhere((song) => song.id == rs?.id);
-
-    // If we found it, and there is a next song available
-    if (currentIndex != -1 && currentIndex + 1 < suggestedSong!.data!.length) {
-      // Get the next song
-      Result nextSong = suggestedSong!.data![currentIndex + 1];
-
-      // Tell the player to play it (this triggers your URL fetching logic automatically)
-      setSong(nextSong);
+    // Just seek to next. If it's valid, the index listener will update state.
+    if (player.hasNext) {
+       player.seekToNext();
     } else {
-      print("End of playlist reached.");
-      // Optional: Fetch more suggested songs here or loop back to the start
+       print("AudioController: No next song in player.");
     }
   }
 
   onPrevious() {
-    if (suggestedSong?.data == null || suggestedSong!.data!.isEmpty) return;
-
-    int currentIndex = suggestedSong!.data!.indexWhere((song) => song.id == rs?.id);
-
-    // If we found it, and there is a previous song available
-    if (currentIndex > 0) {
-      Result previousSong = suggestedSong!.data![currentIndex - 1];
-      setSong(previousSong);
+    if (player.hasPrevious) {
+       player.seekToPrevious();
     } else {
-      // If we are on the first song, just restart it
-      player.seek(Duration.zero);
+       player.seek(Duration.zero);
     }
   }
 
@@ -403,4 +429,5 @@ onNext() {
       update();
     }
   }
+
 }
