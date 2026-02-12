@@ -117,20 +117,14 @@ class PlaylistTlle extends StatelessWidget {
                               controller.getPlaylistById(name).isNotEmpty
                                   ? GestureDetector(
                                     onTap: () {
-                                      if (controller
-                                          .getPlaylistById(name)
+                                      List<Result> playlist = controller.getPlaylistById(name);
+                                      if (playlist
                                           .isNotEmpty) {
-                                        print("hello");
                                         List<Result> results =
                                             List.generate(
-                                                controller
-                                                    .getPlaylistById(name)
-                                                    .length,
-                                                (i) => controller
-                                                    .getSongById(controller
-                                                        .getPlaylistById(
-                                                            name)[i]));
-                                  
+                                                playlist.length,
+                                                (i) => playlist[i]);
+
                                         Get.put(AudioController())
                                             .setMusicList(results);
                                         Get.to(

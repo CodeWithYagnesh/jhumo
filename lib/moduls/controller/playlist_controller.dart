@@ -61,9 +61,14 @@ class PlaylistController extends GetxController {
     return fav.contains(r.id);
   }
 
-  List getPlaylistById(String id) {
+  List<Result> getPlaylistById(String id) {
     List li = playlistDataStorage.read(id) ?? [];
-    return li;
+    List<Result> results = [];
+    for (var i = 0; i < li.length; i++) {
+      var song = getSongById(li[i]);
+      results.add(song);
+    }
+    return results;
   }
 
   getPlaylists() {

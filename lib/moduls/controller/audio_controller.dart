@@ -22,6 +22,7 @@ class AudioController extends GetxController {
   Duration bufferedPosition = Duration.zero;
   int songPos = 0;
   bool isPlay = false;
+  bool _isMonitoring = false;
   SuggestedModel? suggestedSong;
   GetStorage _recentStorage = GetStorage("recent_songs");
   List _recentSongString = [];
@@ -33,12 +34,20 @@ class AudioController extends GetxController {
   void onInit() {
     super.onInit();
     getRecentSong();
-    // startStreaming();
+    // startStreaming(); // Removed from onInit to prevent early initialization issues
     player.setLoopMode(LoopMode.off); // Ensure we don't loop a single song
   }
 
+  bool isShuffle = false;
+
   setLoopMode(LoopMode l) {
     player.setLoopMode(l);
+    update();
+  }
+
+  toggleShuffle() {
+    isShuffle = !isShuffle;
+    player.setShuffleModeEnabled(isShuffle);
     update();
   }
 
@@ -69,7 +78,7 @@ class AudioController extends GetxController {
     print("AudioController: setSong called with ${result.name}");
     rs = result;
     _fetchSong();
-    startStreaming(); // Removed: Already called in onInit
+    startStreaming(); // Start monitoring when a song is set
   }
 
   setMusicList(List<Result> songs) async {
@@ -114,7 +123,7 @@ class AudioController extends GetxController {
     } catch (e) {
       print("AudioController: Error playing playlist: $e");
     }
-    // startStreaming(); // Removed: Already called in onInit
+    startStreaming(); // Start monitoring when a playlist is set
     Get.to(
         PlayerPage(
           result: suggestedSong!.data!.first,
@@ -153,14 +162,22 @@ class AudioController extends GetxController {
   }
 
   startStreaming() {
+    if (_isMonitoring) return; // Prevent duplicate listeners
+
     var collaboration = Get.put(CollaborationController());
-    player.positionStream.listen((Duration? d) async {
+    player.positionStream.listen((Duration? d) {
       if (d != null) {
         currentPosition = d;
-        await collaboration.syncs(d);
+        // Optimization: Do NOT await this and only call if collaboration is active
+        if (collaboration.status) {
+             collaboration.syncs(d);
+        }
         update();
       }
     });
+
+    _isMonitoring = true; // Mark as monitoring
+
     _recentStorage.listen(() {
       getRecentSong();
     });

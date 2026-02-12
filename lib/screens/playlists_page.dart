@@ -1,209 +1,345 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:jhumo/components/button.dart';
-import 'package:jhumo/components/label.dart';
-import 'package:jhumo/components/playlist_tlle.dart';
 import 'package:jhumo/moduls/controller/audio_controller.dart';
 import 'package:jhumo/moduls/controller/playlist_controller.dart';
-import 'package:jhumo/moduls/model/themer.dart';
+import 'package:jhumo/moduls/model/service.dart';
 import 'package:jhumo/screens/fav_page.dart';
+import 'package:jhumo/screens/player_page.dart';
+import 'package:jhumo/screens/playlist_page.dart';
 
 class PlaylistsPage extends StatelessWidget {
   const PlaylistsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder(
-        init: PlaylistController(),
-        builder: (controller) {
-          return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  "Playlists",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      var _txt = TextEditingController();
-                      Get.defaultDialog(
-                          title: "Playlist name",
-                          content: Column(
-                            children: [
-                              TextField(
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                maxLength: 10,
-                                controller: _txt,
-                              ),
-                              SizedBox(height: 10),
-                              TxtButton(
-                                  onPressed: () {
-                                    if (_txt.text.isNotEmpty &&
-                                        !controller.playlistName
-                                            .contains(_txt.text)) {
-                                      controller.createPlayList(_txt.text);
-                                      Get.back();
-                                    }
-                                  },
-                                  text: "Create")
-                            ],
-                          ));
-                    },
-                  )
-                ],
-              ),
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(FavPage());
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Stack(
-                          children: [
-                            controller.favSongsResults.isNotEmpty
-                                ? Container(
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.3),
-                                            blurRadius: 20,
-                                            offset: Offset(0, 16))
-                                      ],
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                (controller.favSongsResults
-                                                            .length <=
-                                                        5
-                                                    ? controller
-                                                        .favSongsResults.length
-                                                    : 5);
-                                            i++) ...[
-                                          Expanded(
-                                              child: Image.network(
-                                            controller.favSongsResults[i]
-                                                .image![1].url!,
-                                            fit: BoxFit.cover,
-                                            height: Get.height * 0.2,
-                                          )),
-                                        ]
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    clipBehavior: Clip.hardEdge,
-                                    padding: EdgeInsets.all(16),
-                                    alignment: Alignment.bottomLeft,
-                                    height: Get.height * 0.2,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      image:
-                                          controller.favSongsResults.length == 0
-                                              ? DecorationImage(
-                                                  image: AssetImage(
-                                                      "assets/white_logo.png"),
-                                                )
-                                              : null,
-                                      gradient:
-                                          controller.favSongsResults.length == 0
-                                              ? Get.isDarkMode
-                                                  ? Themer.gradientDark
-                                                  : LinearGradient(
-                                                      colors: Themer
-                                                          .gradientLight.colors,
-                                                      begin: Alignment.topRight,
-                                                      end: Alignment.bottomLeft)
-                                              : LinearGradient(
-                                                  colors: [
-                                                    Get.theme
-                                                        .scaffoldBackgroundColor
-                                                        .withOpacity(0.0),
-                                                    Get.theme
-                                                        .scaffoldBackgroundColor
-                                                  ].reversed.toList(),
-                                                  begin: Alignment.bottomLeft,
-                                                  end: Alignment.topRight),
-                                      boxShadow:
-                                          controller.favSongsResults.length == 0
-                                              ? [
-                                                  BoxShadow(
-                                                      color: Colors.black
-                                                          .withOpacity(0.3),
-                                                      blurRadius: 20,
-                                                      offset: Offset(0, 16))
-                                                ]
-                                              : [],
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Favorite's",
-                                          style: Get.textTheme.headlineMedium!
-                                              .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          "${controller.favSongsResults.length} songs",
-                                          style:
-                                              Get.textTheme.bodySmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: GetBuilder<PlaylistController>(
+            init: PlaylistController(),
+            builder: (controller) {
+              return CustomScrollView(
+                physics: BouncingScrollPhysics(),
+                slivers: [
+                  // App Bar / Header
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    sliver: SliverToBoxAdapter(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Your Library",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: -1,
                             ),
-                          ],
+                          ),
+                          IconButton(
+                            onPressed: () => _showCreatePlaylistDialog(context, controller),
+                            icon: Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(Icons.add, color: Colors.white),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Favorites Banner
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: GestureDetector(
+                        onTap: () => Get.to(FavPage()),
+                        child: _buildFavoritesCard(controller),
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Text(
+                        "Playlists",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        primary: false,
-                        itemCount: controller.playlistName.length,
-                        itemBuilder: (context, i) {
-                          return PlaylistTlle(name: controller.playlistName[i]);
-                          // return Text(
-                          //     "${controller.playlistName[i]} ${controller.getPlaylistById(controller.playlistName[i])}");
-                        }),
-                    GetBuilder<AudioController>(
-                        init: AudioController(),
-                        builder: (_) {
-                          return _.rs != null
-                              ? const SizedBox(height: 100)
-                              : Container();
-                        })
+                  ),
+
+                  // Playlist Grid
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 0.8,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          String playlistName = controller.playlistName[index];
+                          return _buildPlaylistTile(context, controller, playlistName);
+                        },
+                        childCount: controller.playlistName.length,
+                      ),
+                    ),
+                  ),
+
+                  // Bottom Spacer for MiniPlayer
+                  SliverToBoxAdapter(child: SizedBox(height: 100)),
+                ],
+              );
+            }),
+      ),
+    );
+  }
+
+  Widget _buildFavoritesCard(PlaylistController controller) {
+    // Generate collage images
+    List<String> images = controller.favSongsResults.take(4).map((e) => e.image?.last.url ?? "").toList();
+
+    return Container(
+      height: 140,
+      decoration: BoxDecoration(
+        color: Color(0xFF2A2A2A),
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF4200FF).withOpacity(0.8),
+            Color(0xFFFF0055).withOpacity(0.6),
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+            // Background Collage (faded)
+            if (images.isNotEmpty)
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.3,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Wrap(
+                      children: images.map((img) =>
+                        Container(
+                          width: (Get.width - 40) / (images.length > 2 ? 4 : images.length), // simple spread
+                          height: 140,
+                          child: Image.network(img, fit: BoxFit.cover),
+                        )
+                      ).toList(),
+                    ),
+                  ),
+                ),
+              ),
+
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                           BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0,5))
+                    ]
+                  ),
+                  child: Center(child: Icon(Icons.favorite, color: Color(0xFFE91E63), size: 30)),
+                ),
+                SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Your Favorites",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      "${controller.favSongsResults.length} Songs",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
-              ));
-        });
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaylistTile(BuildContext context, PlaylistController controller, String name) {
+    List<Result> songs = controller.getPlaylistById(name) as List<Result>;
+    List<String> images = songs.take(4).map((e) => e.image?.last.url ?? "").take(4).toList();
+
+    return GestureDetector(
+      onTap: () => Get.to(PlaylistPage(name: name)),
+      onLongPress: () => _showDeleteDialog(controller, name),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Album Art Grid
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFF1E1E1E),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(color: Colors.black45, blurRadius: 10, offset: Offset(0, 4))
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: images.isEmpty
+                  ? Center(child: Icon(Icons.music_note, color: Colors.white24, size: 40))
+                  : images.length < 4
+                      ? Image.network(images[0], fit: BoxFit.cover, width: double.infinity, height: double.infinity)
+                      : Column(
+                          children: [
+                            Expanded(child: Row(children: [
+                               Expanded(child: Image.network(images[0], fit: BoxFit.cover)),
+                               Expanded(child: Image.network(images[1], fit: BoxFit.cover)),
+                            ])),
+                            Expanded(child: Row(children: [
+                               Expanded(child: Image.network(images[2], fit: BoxFit.cover)),
+                               Expanded(child: Image.network(images[3], fit: BoxFit.cover)),
+                            ])),
+                          ],
+                        ),
+            ),
+          ),
+          SizedBox(height: 12),
+          Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "${songs.length} Songs",
+            style: TextStyle(
+              fontFamily: 'Inter',
+              color: Colors.white54,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCreatePlaylistDialog(BuildContext context, PlaylistController controller) {
+    TextEditingController _txt = TextEditingController();
+    Get.defaultDialog(
+      title: "New Playlist",
+      titleStyle: TextStyle(color: Colors.white, fontFamily: 'Inter', fontWeight: FontWeight.bold),
+      backgroundColor: Color(0xFF1E1E1E),
+      radius: 20,
+      content: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextField(
+              controller: _txt,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: "Playlist Name",
+                hintStyle: TextStyle(color: Colors.white30),
+                border: InputBorder.none,
+              ),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+          ),
+          SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Get.back(),
+                  child: Text("Cancel", style: TextStyle(color: Colors.white54)),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    if (_txt.text.isNotEmpty && !controller.playlistName.contains(_txt.text)) {
+                      controller.createPlayList(_txt.text);
+                      Get.back();
+                    }
+                  },
+                  child: Text("Create", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteDialog(PlaylistController controller, String name) {
+     Get.defaultDialog(
+      title: "Delete Playlist?",
+      titleStyle: TextStyle(color: Colors.white, fontFamily: 'Inter', fontWeight: FontWeight.bold),
+      middleText: "Are you sure you want to delete '$name'?",
+      middleTextStyle: TextStyle(color: Colors.white70),
+      backgroundColor: Color(0xFF1E1E1E),
+      radius: 20,
+      confirm: ElevatedButton(
+         style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+         onPressed: () {
+            controller.deletePlaylistById(name);
+            Get.back();
+         },
+         child: Text("Delete", style: TextStyle(color: Colors.white)),
+      ),
+      cancel: TextButton(
+         onPressed: () => Get.back(),
+         child: Text("Cancel", style: TextStyle(color: Colors.white54)),
+      ),
+     );
   }
 }

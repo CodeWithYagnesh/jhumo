@@ -19,49 +19,35 @@ class SearchControl extends GetxController {
     super.onInit();
   }
 
+  List<String> suggestions = [];
+  bool isSubmitted = false;
+
   onChange(String s) {
-    searchAll(s);
-    searchSong(s);
+    if (s.isEmpty) {
+      suggestions = [];
+      isSubmitted = false;
+      update();
+      return;
+    }
+    isSubmitted = false; // User is typing, show suggestions
+    fetchSuggestions(s);
   }
 
-  searchAll(String s) async {
-    search = s;
-    var results = await _ytService.searchSongs(s);
-    // searchModel = searchModelFromJson(responce.body);
-    // Constructing a dummy SearchModel
-    var data = sm.Data(
-      songs: sm.Songs(results: results.map((e) => sm.SongsResult(
-        id: e.id,
-        title: e.name,
-        // image: e.image, // Image types might differ? Result has List<DownloadUrl>, SongsResult has List<Image>?
-        // In service.dart: Image has quality/url. DownloadUrl has quality/url.
-        // In Search_model.dart: Image has quality/url.
-        // They are different classes. We need to map.
-        image: e.image?.map((i) => sm.Image(quality: i.quality?.toString(), url: i.url)).toList(),
-        album: e.album?.name ?? "",
-        url: e.url,
-        type: "song",
-        language: "Hindi", // Placeholder
-        description: e.description,
-        primaryArtists: e.artist,
-        singers: e.artist
-      )).toList())
-    );
-    searchModel = sm.SearchModel(success: true, data: data);
-    // print(searchModel!.data!.toJson());
-
+  fetchSuggestions(String query) async {
+    suggestions = await _ytService.getSearchSuggestions(query);
     update();
   }
 
   searchSong(String query) async {
     search = query;
+    isSubmitted = true; // User submitted, show results
+    update(); // Update UI to show loading or clear previous results while fetching
+
     var results = await _ytService.searchSongs(query);
     var data = srv.Data(results: results);
     allSongs = srv.SongService(success: true, data: data);
-    // allSongs!.data!.results!.toPrint;
 
     update();
-    // ${_var.jioSaavnUrl}/api/search/songs?query=Believer
   }
 
   searchArtist(String s) async {

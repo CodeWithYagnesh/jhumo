@@ -255,8 +255,7 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         controller.getSongById(songIds[i])));
                               },
                               child: RecentMusicTile(
-                                rs: controller.getSongById(
-                                    controller.getPlaylistById(name)[i]),
+                                rs: controller.getSongById(songIds[i]),
                               ),
                             );
                           })

@@ -39,6 +39,16 @@ class YoutubeService {
     }
   }
 
+  Future<List<String>> getSearchSuggestions(String query) async {
+    try {
+      var suggestions = await _yt.search.getQuerySuggestions(query);
+      return suggestions.toList();
+    } catch (e) {
+      print("Error getting search suggestions: $e");
+      return [];
+    }
+  }
+
   Future<Result?> getSong(String id) async {
     try {
       var video = await _yt.videos.get(id);

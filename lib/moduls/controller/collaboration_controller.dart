@@ -20,7 +20,8 @@ class CollaborationController extends GetxController {
   String id = "";
   Duration? durationn;
   int timeDuration = 500;
-  var _audioController = Get.put(AudioController());
+  // lazy load to avoid circular dependency
+  AudioController get _audioController => Get.find<AudioController>();
   StreamSubscription<DatabaseEvent>? autoSync;
   String? code;
   YoutubeService _ytService = YoutubeService();
