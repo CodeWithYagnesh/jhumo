@@ -1,19 +1,24 @@
 import 'dart:math';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:get_storage/get_storage.dart' hide Data;
 
 import 'package:jhumo/main.dart';
 import 'package:jhumo/moduls/controller/collaboration_controller.dart';
 import 'package:jhumo/moduls/service/youtube_service.dart';
 import 'package:jhumo/moduls/service/youtube_audio_source.dart';
-import 'package:jhumo/moduls/methods.dart';
-import 'package:jhumo/moduls/model/album_song.dart';
+
+
 import 'package:jhumo/moduls/model/lyrics_model.dart';
-import 'package:jhumo/moduls/model/service.dart';
+import 'package:jhumo/moduls/model/service.dart' hide Data;
 import 'package:jhumo/screens/player_page.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'package:flutter/material.dart';
 
 class AudioController extends GetxController {
   Result? rs;
@@ -157,8 +162,39 @@ class AudioController extends GetxController {
   }
 
   getLyrics() async {
-    // Lyrics not supported by YoutubeExplode directly
-    // Keeping method empty or removing logic
+    print("AudioController: getLyrics() triggered");
+    if (rs?.id == null) {
+      print("AudioController: Current song (rs) or ID is null. Cannot fetch lyrics.");
+      return;
+    }
+
+    print("AudioController: Fetching lyrics for ${rs?.name} (${rs?.id})");
+    lyrics = null; // Clear previous lyrics
+    // update(); // Optional: if you want to show loading state for lyrics
+
+    try {
+      String? lyricsText = await _ytService.getLyrics(rs!.id!);
+      if (lyricsText != null && lyricsText.isNotEmpty) {
+        print("AudioController: Lyrics text received. Updating model.");
+        lyrics = Lyrics(
+          success: true,
+          data: Data(
+            lyrics: lyricsText,
+            snippet: lyricsText.length > 50 ? lyricsText.substring(0, 50) : lyricsText,
+            copyright: "Lyrics provided by YouTube Closed Captions",
+          )
+        );
+        rs?.hasLyrics = true;
+      } else {
+        print("AudioController: No lyrics found.");
+        lyrics = null;
+        rs?.hasLyrics = false;
+      }
+    } catch (e) {
+      print("AudioController: Error fetching lyrics: $e");
+      lyrics = null;
+    }
+    update();
   }
 
   startStreaming() {
@@ -444,6 +480,64 @@ onNext() {
       player.play();
       isPlay = true;
       update();
+    }
+  }
+
+  downloadCurrentSong() async {
+    if (rs == null || rs!.id == null) {
+      Get.snackbar("Error", "No song selected", colorText: Colors.white, backgroundColor: Colors.red);
+      return;
+    }
+
+    // 1. UI Feedback
+    Get.snackbar("Downloading...", "Starting download for ${rs!.name}", showProgressIndicator: true,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Color(0xFF1E1E1E),
+      colorText: Colors.white,
+      margin: EdgeInsets.all(20),
+      duration: Duration(seconds: 3)
+    );
+
+    try {
+      // 2. Get Audio URL
+      String? audioUrl = await _ytService.getAudioUrl(rs!.id!);
+      if (audioUrl == null) {
+        Get.snackbar("Failed", "Could not get audio stream.", backgroundColor: Colors.redAccent, colorText: Colors.white);
+        return;
+      }
+
+      // 3. Directory
+      Directory? dir;
+      if (Platform.isAndroid) {
+        dir = await getExternalStorageDirectory();
+        // /storage/emulated/0/Android/data/com.example.jhumo/files
+      } else {
+        dir = await getApplicationDocumentsDirectory();
+      }
+
+      if (dir == null) {
+         Get.snackbar("Error", "Storage directory not found.", backgroundColor: Colors.redAccent, colorText: Colors.white);
+         return;
+      }
+
+      // 4. File Path
+      String sanitizedName = rs!.name!.replaceAll(RegExp(r'[^\w\s]+'), '').trim();
+      String fileName = "$sanitizedName.m4a";
+      String savePath = "${dir.path}/$fileName";
+      print("Downloading to $savePath");
+
+      // 5. Download using Dio
+      await Dio().download(audioUrl, savePath);
+
+      Get.snackbar("Success", "Downloaded to ${dir.path}",
+        backgroundColor: Colors.green, colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM, margin: EdgeInsets.all(20),
+        duration: Duration(seconds: 4)
+      );
+
+    } catch (e) {
+      Get.snackbar("Error", "Download failed: $e", backgroundColor: Colors.red, colorText: Colors.white);
+      print("Download Error: $e");
     }
   }
 

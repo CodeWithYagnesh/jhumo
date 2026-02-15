@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:jhumo/moduls/model/playlists_song.dart' as ps;
 import 'package:jhumo/moduls/model/service.dart';
 
 
@@ -23,13 +24,62 @@ class YoutubeService {
     }
   }
 
+  Future<List<Result>> searchPlaylists(String query) async {
+    print("YoutubeService: Searching playlists for '$query'");
+    try {
+      var searchResults = await _yt.search.searchContent(query, filter: TypeFilters.playlist);
+      print("YoutubeService: Found ${searchResults.length} playlists");
+
+      List<Result> results = [];
+      for (var item in searchResults) {
+        try {
+          results.add(_mapPlaylistToResult(item));
+        } catch (e) {
+          print("YoutubeService: Error mapping playlist item: $e");
+        }
+      }
+
+      print("YoutubeService: Mapped ${results.length} results");
+      return results;
+    } catch (e) {
+      print("Error searching playlists: $e");
+      return [];
+    }
+  }
+
+  Future<ps.PlaylistsSong?> getPlaylistDetails(String id) async {
+    try {
+      var playlist = await _yt.playlists.get(id);
+      var videos = await _yt.playlists.getVideos(id).toList();
+
+      List<Result> songs = videos.map((e) => _mapVideoToResult(e)).toList();
+
+      return ps.PlaylistsSong(
+        success: true,
+        data: ps.Data(
+          id: playlist.id.value,
+          name: playlist.title,
+          description: playlist.description,
+          image: [
+             ps.Image(url: playlist.thumbnails.highResUrl, quality: "500x500")
+          ],
+          songs: songs,
+          songCount: songs.length
+        )
+      );
+    } catch (e) {
+      print("Error getting playlist details: $e");
+      return null;
+    }
+  }
+
   Future<List<Result>> getSuggestedSongs(String videoId) async {
     try {
       var video = await _yt.videos.get(videoId);
       var relatedVideos = await _yt.videos
           .getRelatedVideos(video)
           .then((value) => value!.toList());
-      if (relatedVideos != null && relatedVideos.isNotEmpty) {
+      if (relatedVideos.isNotEmpty) {
         return relatedVideos.map((e) => _mapVideoToResult(e)).toList();
       }
       return [];
@@ -46,6 +96,31 @@ class YoutubeService {
     } catch (e) {
       print("Error getting search suggestions: $e");
       return [];
+    }
+  }
+
+  Future<String?> getLyrics(String videoId) async {
+    try {
+      var manifest = await _yt.videos.closedCaptions.getManifest(videoId);
+      if (manifest.tracks.isEmpty) return null;
+
+      // Prefer English, then Hindi, then first available
+      var track = manifest.tracks.firstWhere(
+          (t) => t.language.code == 'en',
+          orElse: () => manifest.tracks.firstWhere(
+              (t) => t.language.code == 'hi',
+              orElse: () => manifest.tracks.first));
+
+      var captions = await _yt.videos.closedCaptions.get(track);
+
+      var sb = StringBuffer();
+      for (var caption in captions.captions) {
+        sb.writeln(caption.text);
+      }
+      return sb.toString();
+    } catch (e) {
+      print("Error getting lyrics: $e");
+      return null;
     }
   }
 
@@ -133,15 +208,9 @@ class YoutubeService {
     String author = video.author;
     int duration = video.duration?.inSeconds ?? 0;
 
-    return Result(
-      id: id,
-      name: title,
-      title: title,
-      artist: author,
-      artists:
-          Artists(primary: [All(name: author, role: Role.PRIMARY_ARTISTS)]),
-      duration: duration,
-      image: [
+    List<DownloadUrl> images = [];
+    try {
+      images = [
         DownloadUrl(
             url: video.thumbnails.lowResUrl,
             quality: Quality.THE_50_X50), // Low
@@ -151,9 +220,58 @@ class YoutubeService {
         DownloadUrl(
             url: video.thumbnails.highResUrl,
             quality: Quality.THE_500_X500), // High
-      ],
+      ];
+    } catch (e) {
+      // Thumbnail might be missing or parsing failed
+      // We return empty list, and UI should handle fallback to asset
+    }
+
+    return Result(
+      id: id,
+      name: title,
+      title: title,
+      artist: author,
+      artists:
+          Artists(primary: [All(name: author, role: Role.PRIMARY_ARTISTS)]),
+      duration: duration,
+      image: images,
       downloadUrl: [DownloadUrl(url: "", quality: Quality.THE_320_KBPS)],
       hasLyrics: false,
+      type: ResultType.SONG,
+    );
+  }
+
+  Result _mapPlaylistToResult(dynamic playlist) {
+    String id = playlist.id.value;
+    String title = playlist.title;
+    int count = playlist.videoCount ?? 0;
+
+    String imageUrl = "";
+    try {
+      imageUrl = playlist.thumbnails.highResUrl;
+    } catch(e) {
+      try {
+        imageUrl = playlist.thumbnails.mediumResUrl;
+      } catch(e) {
+         try {
+           imageUrl = playlist.thumbnails.lowResUrl;
+         } catch(e) {
+            print("No thumbnail for playlist $title");
+         }
+      }
+    }
+
+    return Result(
+      id: id,
+      name: title,
+      title: title,
+      type: ResultType.PLAYLIST,
+      image: imageUrl.isNotEmpty ? [
+        DownloadUrl(
+            url: imageUrl,
+            quality: Quality.THE_500_X500),
+      ] : [],
+      description: "Playlist • $count songs",
     );
   }
 

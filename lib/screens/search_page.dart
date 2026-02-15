@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:jhumo/moduls/controller/search_controller.dart';
 import 'package:jhumo/moduls/service/youtube_service.dart';
 import 'package:jhumo/screens/player_page.dart';
+import 'package:jhumo/screens/opened_playlist_page.dart';
 
 class SearchPage extends StatelessWidget {
   SearchPage({super.key});
@@ -39,7 +40,7 @@ class SearchPage extends StatelessWidget {
                         fontSize: 16,
                       ),
                       decoration: InputDecoration(
-                        hintText: "Search songs...",
+                        hintText: "Search songs, playlists...",
                         hintStyle: TextStyle(
                           fontFamily: 'Inter',
                           color: Colors.white38,
@@ -81,93 +82,37 @@ class SearchPage extends StatelessWidget {
                 init: SearchControl(""),
                 builder: (controller) {
                   // STATE 1: LOADING / EMPTY
-                  // You might want a loading spinner here if checking a loading flag
+                  if (controller.isSubmitted && controller.allSongs?.data?.results == null) {
+                     return Center(child: CircularProgressIndicator(color: Colors.white));
+                  }
 
                   // STATE 2: RESULTS (User Submitted)
                   if (controller.isSubmitted) {
-                      if (controller.allSongs?.data?.results == null) {
-                         return Center(child: CircularProgressIndicator(color: Colors.white));
-                      }
-
-                      var results = controller.allSongs!.data!.results!;
-                      if (results.isEmpty) {
-                         return Center(
-                           child: Text("No results found", style: TextStyle(color: Colors.white54))
-                         );
-                      }
-
-                      return ListView.separated(
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        itemCount: results.length,
-                        separatorBuilder: (c, i) => SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          var song = results[index];
-                          return GestureDetector(
-                            onTap: () {
-                               Get.to(
-                                 PlayerPage(result: song),
-                                 transition: Transition.downToUp
-                               );
-                            },
-                            child: Container(
-                              color: Colors.transparent, // Hit test
-                              child: Row(
+                      return DefaultTabController(
+                        length: 2,
+                        child: Column(
+                          children: [
+                            TabBar(
+                              indicatorColor: Color(0xffCA2828),
+                              labelColor: Colors.white,
+                              unselectedLabelColor: Colors.white54,
+                              tabs: [
+                                Tab(text: "Songs"),
+                                Tab(text: "Playlists"),
+                              ],
+                            ),
+                            Expanded(
+                              child: TabBarView(
                                 children: [
-                                  // Art
-                                  Container(
-                                    height: 56,
-                                    width: 56,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.white10,
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            (song.image != null && song.image!.isNotEmpty)
-                                                ? song.image!.last.url!
-                                                : "https://via.placeholder.com/56"
-                                        ),
-                                        fit: BoxFit.cover
-                                      )
-                                    ),
-                                  ),
-                                  SizedBox(width: 16),
-                                  // Text
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          song.name ?? "Unknown",
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: 'Inter',
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          song.artists?.all?.first.name ?? "Unknown Artist",
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: 'Inter',
-                                            color: Colors.white54,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(Icons.play_arrow_rounded, color: Colors.white54),
+                                  // SONGS TAB
+                                  _buildSongsList(controller),
+                                  // PLAYLISTS TAB
+                                  _buildPlaylistsList(controller),
                                 ],
                               ),
                             ),
-                          );
-                        },
+                          ],
+                        ),
                       );
                   }
 
@@ -201,7 +146,57 @@ class SearchPage extends StatelessWidget {
                     );
                   }
 
-                  // STATE 4: IDLE (No text, no results)
+                  // STATE 4: HISTORY (Empty Search, but has history)
+                  if (controller.history.isNotEmpty) {
+                     return Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Padding(
+                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                           child: Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                               Text("Recent Searches", style: TextStyle(color: Colors.white54, fontFamily: 'Inter', fontWeight: FontWeight.bold, fontSize: 13)),
+                               GestureDetector(
+                                 onTap: () => controller.clearHistory(),
+                                 child: Text("Clear All", style: TextStyle(color: Color(0xFFFF0055), fontFamily: 'Inter', fontSize: 12)),
+                               )
+                             ],
+                           ),
+                         ),
+                         Expanded(
+                           child: ListView.builder(
+                             physics: BouncingScrollPhysics(),
+                             itemCount: controller.history.length,
+                             itemBuilder: (context, index) {
+                               var item = controller.history[index];
+                               return ListTile(
+                                 leading: Icon(Icons.history_rounded, color: Colors.white38, size: 22),
+                                 title: Text(
+                                   item,
+                                   style: TextStyle(color: Colors.white70, fontFamily: 'Inter', fontSize: 15),
+                                 ),
+                                 trailing: IconButton(
+                                   icon: Icon(Icons.close_rounded, color: Colors.white30, size: 18),
+                                   onPressed: () => controller.removeFromHistory(item),
+                                 ),
+                                 onTap: () {
+                                     _textController.text = item;
+                                     _textController.selection = TextSelection.fromPosition(
+                                        TextPosition(offset: item.length)
+                                     );
+                                     _searchController.searchSong(item);
+                                     FocusManager.instance.primaryFocus?.unfocus();
+                                 },
+                               );
+                             },
+                           ),
+                         ),
+                       ],
+                     );
+                  }
+
+                  // STATE 5: IDLE (No text, no results, no history)
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -221,6 +216,173 @@ class SearchPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSongsList(SearchControl controller) {
+    if (controller.allSongs?.data?.results == null || controller.allSongs!.data!.results!.isEmpty) {
+        return Center(
+          child: Text("No songs found", style: TextStyle(color: Colors.white54))
+        );
+    }
+    var results = controller.allSongs!.data!.results!;
+    return ListView.separated(
+      physics: BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: results.length,
+      separatorBuilder: (c, i) => SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        var song = results[index];
+        return GestureDetector(
+          onTap: () {
+              Get.to(
+                PlayerPage(result: song),
+                transition: Transition.downToUp
+              );
+          },
+          child: Container(
+            color: Colors.transparent, // Hit test
+            child: Row(
+              children: [
+                // Art
+                Container(
+                  height: 56,
+                  width: 56,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white10,
+                    image: DecorationImage(
+                      image: (song.image != null && song.image!.isNotEmpty)
+                          ? NetworkImage(song.image!.last.url!)
+                          : AssetImage("assets/ph_song.jpg") as ImageProvider,
+                      fit: BoxFit.cover
+                    )
+                  ),
+                ),
+                SizedBox(width: 16),
+                // Text
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        song.name ?? "Unknown",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        (song.artists?.all != null && song.artists!.all!.isNotEmpty)
+                            ? song.artists!.all!.first.name ?? "Unknown Artist"
+                            : "Unknown Artist",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: Colors.white54,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.play_arrow_rounded, color: Colors.white54),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPlaylistsList(SearchControl controller) {
+    if (controller.isPlaylistLoading) {
+      return Center(child: CircularProgressIndicator(color: Colors.white));
+    }
+
+    if (controller.playlistResults.isEmpty) {
+       return Center(
+         child: Text("No playlists found", style: TextStyle(color: Colors.white54))
+       );
+    }
+    return ListView.separated(
+      physics: BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: controller.playlistResults.length,
+      separatorBuilder: (c, i) => SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        var playlist = controller.playlistResults[index];
+        return GestureDetector(
+          onTap: () async {
+              // Fetch details and open
+              var details = await YoutubeService().getPlaylistDetails(playlist.id!);
+              if(details != null) {
+                  Get.to(
+                    OpenedPlaylistPage(r: playlist, pl: details),
+                    transition: Transition.rightToLeft
+                  );
+              }
+          },
+          child: Container(
+            color: Colors.transparent,
+            child: Row(
+              children: [
+                Container(
+                  height: 56,
+                  width: 56,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white10,
+                    image: DecorationImage(
+                      image: (playlist.image != null && playlist.image!.isNotEmpty)
+                          ? NetworkImage(playlist.image!.first.url!)
+                          : AssetImage("assets/ph_song.jpg") as ImageProvider,
+                      fit: BoxFit.cover
+                    )
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        playlist.title ?? "Unknown",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        playlist.description ?? "Playlist",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: Colors.white54,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, color: Colors.white54),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

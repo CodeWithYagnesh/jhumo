@@ -82,7 +82,7 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             songIds.length,
                                             (i) => controller
                                                 .favSongsResults[i]);
-                            
+
                                         Get.put(AudioController())
                                             .setMusicList(results);
                                         Get.to(
@@ -189,9 +189,11 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           decoration: BoxDecoration(
                                               image: DecorationImage(
                                                   image: NetworkImage(
-                                                      controller.favSongsResults[i]
-                                                        .image![2]
-                                                        .url!,
+                                                      (controller.favSongsResults[i].image != null && controller.favSongsResults[i].image!.isNotEmpty)
+                                                          ? (controller.favSongsResults[i].image!.length > 2
+                                                              ? controller.favSongsResults[i].image![2].url!
+                                                              : controller.favSongsResults[i].image!.last.url!)
+                                                          : "https://via.placeholder.com/150", // Fallback
                                                   ),
                                                   fit: BoxFit.cover)),
                                         )),

@@ -100,7 +100,9 @@ class OpenedPlaylistPage extends StatelessWidget {
               background: Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: NetworkImage(r.image![2].url!),
+                        image: (r.image != null && r.image!.isNotEmpty)
+                            ? NetworkImage(r.image!.last.url!)
+                            : AssetImage("assets/ph_song.jpg") as ImageProvider,
                         fit: BoxFit.cover)),
                 child: Container(
                   decoration: BoxDecoration(

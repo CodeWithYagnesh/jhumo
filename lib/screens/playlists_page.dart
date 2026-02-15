@@ -201,7 +201,7 @@ class PlaylistsPage extends StatelessWidget {
 
   Widget _buildPlaylistTile(BuildContext context, PlaylistController controller, String name) {
     List<Result> songs = controller.getPlaylistById(name) as List<Result>;
-    List<String> images = songs.take(4).map((e) => e.image?.last.url ?? "").take(4).toList();
+    List<String> images = songs.take(4).map((e) => (e.image != null && e.image!.isNotEmpty) ? e.image!.last.url ?? "" : "").toList();
 
     return GestureDetector(
       onTap: () => Get.to(PlaylistPage(name: name)),

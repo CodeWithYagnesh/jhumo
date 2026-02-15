@@ -3,11 +3,12 @@ import 'package:get_storage/get_storage.dart';
 class Variables {
 
   List<String> _strs = [
+    "Latest Hindi Hits",
+    "Gujarati Superhits",
+    "Romantic Melodies",
     "Trending Now",
-    "Top Hits",
-    "New Releases",
-    "Lo-Fi Beats",
-    "Workout Motivation"
+    "Party Anthems",
+    "Lo-Fi Beats"
   ];
   Variables() {
 

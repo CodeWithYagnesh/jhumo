@@ -56,40 +56,78 @@ class HomePage extends StatelessWidget {
     String name = GetStorage("user").read("name") ?? "";
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.only(bottom: 150),
+      padding: EdgeInsets.zero, // Remove default padding to allow gradient to touch top
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section
-          // Padding(
-          //   padding: const EdgeInsets.fromLTRB(16, 10, 16, 10), // Reduced from 20
+          // 1. Red Gradient Header & Greeting
+          // Container(
+          //   width: double.infinity,
+          //   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20), // Top padding for status bar
+          //   // decoration: BoxDecoration(
+          //   //   gradient: LinearGradient(
+          //   //     begin: Alignment.topCenter,
+          //   //     end: Alignment.bottomCenter,
+          //   //     colors: [
+          //   //       Color(0xffCA2828).withOpacity(0.8), // Themer.main
+          //   //       Color(0xffCA2828).withOpacity(0.4),
+          //   //       Colors.transparent,
+          //   //     ],
+          //   //     stops: [0.0, 0.6, 1.0],
+          //   //   ),
+          //   // ),
           //   child: Column(
           //     crossAxisAlignment: CrossAxisAlignment.start,
           //     children: [
-          //       Text(
-          //         "Hello",
-          //         style: TextStyle(
-          //           fontFamily: 'Inter',
-          //           fontSize: 14,
-          //           color: Colors.white70,
-          //           fontWeight: FontWeight.w500,
-          //         ),
-          //       ),
-          //       Text(
-          //         name.isNotEmpty ? name : "Music Lover",
-          //         style: TextStyle(
-          //           fontFamily: 'Inter',
-          //           fontSize: 26, // Reduced from 28
-          //           color: Colors.white,
-          //           fontWeight: FontWeight.bold,
-          //           letterSpacing: -0.5,
-          //         ),
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           Column(
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               Text(
+          //                 _greeting(),
+          //                 style: TextStyle(
+          //                   fontFamily: 'Inter',
+          //                   fontSize: 14,
+          //                   color: Colors.white70,
+          //                   fontWeight: FontWeight.w500,
+          //                   letterSpacing: 0.5,
+          //                 ),
+          //               ),
+          //               SizedBox(height: 4),
+          //               Text(
+          //                 name.isNotEmpty ? name : "Music Lover",
+          //                 style: TextStyle(
+          //                   fontFamily: 'Inter',
+          //                   fontSize: 24, // Professional size
+          //                   color: Colors.white,
+          //                   fontWeight: FontWeight.w700,
+          //                   letterSpacing: -0.5,
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           // Optional Profile or Settings Icon
+          //           Container(
+          //             padding: EdgeInsets.all(2),
+          //             decoration: BoxDecoration(
+          //               shape: BoxShape.circle,
+          //               border: Border.all(color: Colors.white24),
+          //             ),
+          //             child: CircleAvatar(
+          //               radius: 20,
+          //               backgroundColor: Colors.white10,
+          //               child: Icon(Icons.person, color: Colors.white),
+          //             ),
+          //           )
+          //         ],
           //       ),
           //     ],
           //   ),
           // ),
 
-          // Recently Played
+          // 2. Recently Played Section
           GetBuilder<AudioController>(
               init: AudioController(),
               builder: (context) {
@@ -100,27 +138,27 @@ class HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Reduced padding
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                       child: Text(
                         "Recently Played",
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: 160, // Reduced from 180
+                      height: 160,
                       child: ListView.separated(
                         physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
                         scrollDirection: Axis.horizontal,
                         itemCount: audioController.recentSong.length > 10
                             ? 10
                             : audioController.recentSong.length,
-                        separatorBuilder: (c, i) => SizedBox(width: 12), // Reduced separator
+                        separatorBuilder: (c, i) => SizedBox(width: 16),
                         itemBuilder: (context, index) {
                           var song = audioController.recentSong[index];
                           return GestureDetector(
@@ -135,17 +173,16 @@ class HomePage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  height: 110, // Reduced from 120
+                                  height: 110,
                                   width: 110,
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12), // Tighter radius
-
+                                    borderRadius: BorderRadius.circular(16), // Modern radius
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 4)
+                                        color: Colors.black.withOpacity(0.3),
+                                        blurRadius: 10,
+                                        offset: Offset(0, 5)
                                       )
                                     ],
                                     image: DecorationImage(
@@ -159,16 +196,17 @@ class HomePage extends StatelessWidget {
                                   ),
                                   child: Center(
                                     child: Container(
-                                      padding: EdgeInsets.all(6),
+                                      padding: EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
+                                        color: Colors.black.withOpacity(0.4),
                                         shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.white24, width: 1.5)
                                       ),
-                                      child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                                      child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 6),
+                                SizedBox(height: 8),
                                 SizedBox(
                                   width: 110,
                                   child: Text(
@@ -177,7 +215,7 @@ class HomePage extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontFamily: 'Inter',
-                                      color: Colors.white,
+                                      color: Colors.white.withOpacity(0.9),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                     ),
@@ -193,21 +231,24 @@ class HomePage extends StatelessWidget {
                 );
               }),
 
-          SizedBox(height: 10), // Reduced from 20
+          SizedBox(height: 10),
 
-          // Recommended Sections
+          // 3. Recommended & Categories
           GetBuilder<MusicController>(
             init: MusicController(),
             builder: (_) {
               if (_.ss.isEmpty) {
-                return Center(child: CircularProgressIndicator(strokeWidth: 2));
+                return Container(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xffCA2828))),
+                );
               }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (int i = 0; i < _.ss.length; i++) ...[
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Reduced
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -216,22 +257,23 @@ class HomePage extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w700,
                               color: Colors.white,
+                              letterSpacing: -0.2,
                             ),
                           ),
-                          Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.white54)
+                          // Optional "See More" could go here
                         ],
                       ),
                     ),
                     SizedBox(
-                      height: 190, // Reduced from 200
+                      height: 190,
                       child: ListView.separated(
                           physics: BouncingScrollPhysics(),
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
                           itemCount: _.ss[i].data!.results!.length,
                           scrollDirection: Axis.horizontal,
-                          separatorBuilder: (c, i) => SizedBox(width: 12),
+                          separatorBuilder: (c, i) => SizedBox(width: 16),
                           itemBuilder: (context, index) {
                             var result = _.ss[i].data?.results?[index];
 
@@ -243,15 +285,22 @@ class HomePage extends StatelessWidget {
                                     transition: Transition.downToUp);
                               },
                               child: Container(
-                                width: 130, // Reduced from 140
+                                width: 140,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                      Container(
-                                        height: 130, // Square aspect
-                                        width: 130,
+                                        height: 140,
+                                        width: 140,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(16),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.2),
+                                              blurRadius: 8,
+                                              offset: Offset(0, 4)
+                                            )
+                                          ],
                                           image: DecorationImage(
                                             image: NetworkImage(
                                               (result.image != null && result.image!.isNotEmpty)
@@ -262,26 +311,30 @@ class HomePage extends StatelessWidget {
                                           )
                                         ),
                                      ),
-                                     SizedBox(height: 6),
+                                     SizedBox(height: 8),
                                      Text(
                                         result.name ?? "",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontFamily: 'Inter',
-                                          color: Colors.white,
+                                          color: Colors.white.withOpacity(0.9),
                                           fontWeight: FontWeight.w600,
-                                          fontSize: 13
+                                          fontSize: 14
                                         ),
                                      ),
+                                     SizedBox(height: 2),
                                      Text(
-                                        result.artists?.all?.first.name ?? "",
+                                        (result.artists?.all != null && result.artists!.all!.isNotEmpty)
+                                            ? result.artists!.all!.first.name ?? ""
+                                            : "",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontFamily: 'Inter',
-                                          color: Colors.white60,
-                                          fontSize: 11
+                                          color: Colors.white54,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12
                                         ),
                                      ),
                                   ],
@@ -295,8 +348,21 @@ class HomePage extends StatelessWidget {
               );
             },
           ),
+
+          SizedBox(height: 120), // Bottom padding for mini-player
         ],
       ),
     );
+  }
+
+  String _greeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good Morning';
+    }
+    if (hour < 17) {
+      return 'Good Afternoon';
+    }
+    return 'Good Evening';
   }
 }

@@ -12,10 +12,16 @@ class RecentMusicTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // SAFE IMAGE LOGIC
-    String imageUrl = "https://c.saavncdn.com/191/Kesariya-From-Brahmastra-Hindi-2022-20220717092820-500x500.jpg";
+    ImageProvider imageProvider;
     if (rs.image != null && rs.image!.isNotEmpty) {
-      // Try to get the last image (usually best quality), otherwise first
-      imageUrl = rs.image!.last.url ?? rs.image!.first.url ?? imageUrl;
+      String url = rs.image!.last.url ?? rs.image!.first.url ?? "";
+      if (url.isNotEmpty) {
+        imageProvider = NetworkImage(url);
+      } else {
+        imageProvider = AssetImage("assets/ph_song.jpg");
+      }
+    } else {
+      imageProvider = AssetImage("assets/ph_song.jpg");
     }
 
     return Container(
@@ -32,7 +38,7 @@ class RecentMusicTile extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                    image: NetworkImage(imageUrl),
+                    image: imageProvider,
                     fit: BoxFit.cover)),
           ),
           SizedBox(width: 15),

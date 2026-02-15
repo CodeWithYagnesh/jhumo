@@ -53,13 +53,20 @@ class _SettingPageState extends State<SettingPage> {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Color(0xffCA2828).withOpacity(0.1),
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white24, width: 2),
+                          border: Border.all(color: Color(0xffCA2828), width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xffCA2828).withOpacity(0.2),
+                              blurRadius: 20,
+                              offset: Offset(0, 10)
+                            )
+                          ]
                         ),
                         child: Icon(Icons.person, size: 50, color: Colors.white),
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: 20),
                       GestureDetector(
                         onTap: () => _showEditNameDialog(name),
                         child: Row(
@@ -69,23 +76,26 @@ class _SettingPageState extends State<SettingPage> {
                               name,
                               style: TextStyle(
                                 fontFamily: 'Inter',
-                                fontSize: 24,
+                                fontSize: 26,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
+                                letterSpacing: -0.5,
                               ),
                             ),
                             SizedBox(width: 8),
-                            Icon(Icons.edit, size: 16, color: Colors.white54),
+                            Icon(Icons.edit_rounded, size: 18, color: Color(0xffCA2828)),
                           ],
                         ),
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 6),
                       Text(
                         lang,
                         style: TextStyle(
                           fontFamily: 'Inter',
-                          fontSize: 14,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                           color: Colors.white54,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ],

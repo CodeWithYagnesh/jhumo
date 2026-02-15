@@ -33,10 +33,13 @@ class PlayerPage extends StatelessWidget {
   // Helper to safely get the highest quality image
   String getSafeImage(Result? item) {
     if (item?.image == null || item!.image!.isEmpty) {
-      return "https://c.saavncdn.com/191/Kesariya-From-Brahmastra-Hindi-2022-20220717092820-500x500.jpg"; // Placeholder
+      return "";
     }
     // Try to get the last image (usually highest quality), otherwise the first
-    return item.image!.last.url ?? item.image!.first.url ?? "";
+    if (item.image!.isNotEmpty) {
+      return item.image!.last.url ?? item.image!.first.url ?? "";
+    }
+    return "";
   }
 
   @override
@@ -67,7 +70,9 @@ class PlayerPage extends StatelessWidget {
                       width: Get.width,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(getSafeImage(_player.rs)),
+                          image: getSafeImage(_player.rs).isNotEmpty
+                              ? NetworkImage(getSafeImage(_player.rs))
+                              : AssetImage("assets/ph_song.jpg") as ImageProvider,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -120,24 +125,81 @@ class PlayerPage extends StatelessWidget {
                             icon: Icon(Icons.more_horiz, color: Colors.white, size: 30),
                             onPressed: () {
                                 // Existing Bottom Sheet Logic...
-                                Get.bottomSheet(
-                                  // ... (Keep existing implementation for brevity or refine if needed)
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFF1E1E1E),
-                                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                    ),
-                                    child: Wrap(
-                                      children: [
-                                        ListTile(
-                                          leading: Icon(Icons.info_outline, color: Colors.white),
-                                          title: Text("Song Details", style: TextStyle(color: Colors.white)),
+                                    Get.bottomSheet(
+                                      Container(
+                                        padding: EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFF1E1E1E),
+                                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                                         ),
-                                        // Add other options here
-                                      ],
-                                    ),
-                                  ),
-                                );
+                                        child: Wrap(
+                                          children: [
+                                            // 1. Song Details
+                                            ListTile(
+                                              leading: Icon(Icons.info_outline, color: Colors.white),
+                                              title: Text("Song Details", style: TextStyle(color: Colors.white, fontFamily: 'Inter')),
+                                              onTap: () {
+                                                // Show details implementation
+                                              },
+                                            ),
+                                            Divider(color: Colors.white12),
+
+                                            // 2. Add to Playlist
+                                            ListTile(
+                                              leading: Icon(Icons.playlist_add, color: Colors.white),
+                                              title: Text("Add to Playlist", style: TextStyle(color: Colors.white, fontFamily: 'Inter')),
+                                              onTap: () {
+                                                Get.back(); // Close bottom sheet
+                                                // Show Playlist Selection Dialog
+                                                Get.defaultDialog(
+                                                  title: "Add to Playlist",
+                                                  titleStyle: TextStyle(color: Colors.white, fontFamily: 'Inter', fontWeight: FontWeight.bold),
+                                                  backgroundColor: Color(0xFF1E1E1E),
+                                                  radius: 20,
+                                                  content: Container(
+                                                    height: 200, // Limit height
+                                                    width: 300,
+                                                    child: GetBuilder<PlaylistController>(
+                                                      init: PlaylistController(),
+                                                      builder: (plController) {
+                                                        if (plController.playlistName.isEmpty) {
+                                                           return Center(child: Text("No playlists found.", style: TextStyle(color: Colors.white54)));
+                                                        }
+                                                        return ListView.builder(
+                                                          itemCount: plController.playlistName.length,
+                                                          itemBuilder: (context, index) {
+                                                            String pName = plController.playlistName[index];
+                                                            return ListTile(
+                                                              leading: Icon(Icons.queue_music, color: Colors.white70),
+                                                              title: Text(pName, style: TextStyle(color: Colors.white)),
+                                                              onTap: () {
+                                                                 plController.addToPlaylist(pName, _player.rs!);
+                                                                 Get.back();
+                                                                 Get.snackbar("Added", "Song added to $pName",
+                                                                    backgroundColor: Colors.white, colorText: Colors.black, snackPosition: SnackPosition.BOTTOM, margin: EdgeInsets.all(20));
+                                                              },
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            // 3. Download
+                                            ListTile(
+                                              leading: Icon(Icons.download_rounded, color: Colors.white),
+                                              title: Text("Download", style: TextStyle(color: Colors.white, fontFamily: 'Inter')),
+                                              onTap: () {
+                                                Get.back(); // Close bottom sheet
+                                                Get.put(AudioController()).downloadCurrentSong();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
                             },
                           ),
                         ],
@@ -229,7 +291,9 @@ class PlayerPage extends StatelessWidget {
                                               ),
                                               SizedBox(height: 6),
                                               Text(
-                                                _player.rs?.artists?.all?.first.name ?? "Unknown Artist",
+                                                (_player.rs?.artists?.all != null && _player.rs!.artists!.all!.isNotEmpty)
+                                                    ? _player.rs!.artists!.all!.first.name ?? "Unknown Artist"
+                                                    : "Unknown Artist",
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
@@ -289,45 +353,53 @@ class PlayerPage extends StatelessWidget {
                                       children: [
                                         IconButton(
                                             icon: Icon(Icons.shuffle,
-                                                color: _player.isShuffle ? Colors.white : Colors.white.withOpacity(0.5), size: 22),
+                                                color: _player.isShuffle ? Color(0xFFFF0055) : Colors.white.withOpacity(0.5), size: 22),
                                             onPressed: () {
                                               _player.toggleShuffle();
                                             }
                                         ),
                                         IconButton(
                                             icon: Icon(Icons.skip_previous_rounded,
-                                                color: Colors.white, size: 36),
+                                                color: Colors.white, size: 38),
                                             onPressed: () => _player.onPrevious(),
                                         ),
 
-                                        // PLAY/PAUSE Button
+                                        // PLAY/PAUSE Button (Enhanced)
                                         GestureDetector(
                                           onTap: () => _player.onPlayPause(),
                                           child: Container(
-                                            height: 72,
-                                            width: 72,
+                                            height: 80, // Slightly larger
+                                            width: 80,
                                             decoration: BoxDecoration(
-                                              color: Colors.white,
                                               shape: BoxShape.circle,
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Color(0xFFFF0055),
+                                                  Color(0xFFFF0055).withOpacity(0.8)
+                                                ],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              ),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.white.withOpacity(0.2),
-                                                  blurRadius: 15,
+                                                  color: Color(0xFFFF0055).withOpacity(0.4),
+                                                  blurRadius: 20,
                                                   spreadRadius: 2,
+                                                  offset: Offset(0, 8)
                                                 )
                                               ],
                                             ),
                                             child: Icon(
                                               _player.isPlay ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                              color: Colors.black,
-                                              size: 40,
+                                              color: Colors.white,
+                                              size: 44,
                                             ),
                                           ),
                                         ),
 
                                         IconButton(
                                             icon: Icon(Icons.skip_next_rounded,
-                                                color: Colors.white, size: 36),
+                                                color: Colors.white, size: 38),
                                             onPressed: () => _player.onNext(),
                                         ),
                                         IconButton(
@@ -337,7 +409,7 @@ class PlayerPage extends StatelessWidget {
                                                 : Icons.repeat_rounded,
                                             size: 22,
                                             color: player.loopMode != LoopMode.off
-                                                ? Colors.white
+                                                ? Color(0xFFFF0055)
                                                 : Colors.white.withOpacity(0.5),
                                           ),
                                           onPressed: () {

@@ -2,188 +2,174 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:jhumo/components/button.dart';
-import 'package:jhumo/moduls/controller/theme_controller.dart';
-import 'package:jhumo/moduls/model/themer.dart';
 import 'package:jhumo/screens/main_page.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
-
 class IntroPage2 extends StatelessWidget {
   IntroPage2({super.key});
-  var selectedLanguage = 'English'.obs;
-  List<String> languages = [
-    'English',
-    'Spanish',
-    'Mandarin',
-    'French',
-    'German',
-    'Japanese',
-    'Korean',
-    'Italian',
-    'Portuguese',
-    'Russian',
-    'Arabic',
-    'Hindi',
-    'Bengali',
-    'Turkish',
-    'Vietnamese',
-    'Persian',
-    'Dutch',
-    'Greek',
-    'Swedish',
-    'Thai',
-    'Hebrew',
-    'Czech',
-    'Danish',
-    'Finnish',
-    'Hungarian',
-    'Indonesian',
-    'Norwegian',
-    'Polish',
-    'Romanian',
-    'Ukrainian'
+  final selectedLanguage = 'English'.obs;
+  final List<String> languages = [
+    'English', 'Spanish', 'Mandarin', 'French', 'German', 'Japanese', 'Korean',
+    'Italian', 'Portuguese', 'Russian', 'Arabic', 'Hindi', 'Bengali', 'Turkish',
+    'Vietnamese', 'Persian', 'Dutch', 'Greek', 'Swedish', 'Thai',
+    'Hebrew', 'Czech', 'Danish', 'Finnish', 'Hungarian', 'Indonesian',
+    'Norwegian', 'Polish', 'Romanian', 'Ukrainian'
   ];
-  var _themeController = Get.put(ThemeController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          // gradient: LinearGradient(
-          //   begin: Alignment.topLeft,
-          //   end: Alignment.bottomRight,
-          //   colors: Themer.gradientDark.colors,
-          // ),
-          image: DecorationImage(
-            image: NetworkImage(
-                "https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg?auto=compress&cs=tinysrgb&w=600"),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          // 1. Background Image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                    "https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"), // Different high quality music/party image
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-        child: Container(
-          color: Get.isDarkMode
-              ? Themer.dark.withOpacity(0.5)
-              : Themer.light.withOpacity(0.5),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // Expanded(
-            //     child: Row(
-            //   children: [
-            //     Expanded(
-            //       child: Image.asset(
-            //         "assets/Frame.png",
-            //         fit: BoxFit.cover,
-            //       ),
-            //     ),
-            //   ],
-            // )),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GradientText(
-                    "Find your favorite",
-                    style: Get.textTheme.headlineMedium!.copyWith(fontSize: 70),
-                    colors: Get.isDarkMode
-                        ? Themer.gradientDark.colors
-                        : Themer.gradientLight.colors,
-                  ),
-                  Row(
-                    children: [
-                      Text("MUSIC",
-                          style: Get.textTheme.headlineMedium!.copyWith(
-                              fontSize: 70, fontWeight: FontWeight.bold)),
-                      GradientText(
-                        ".",
-                        style: TextStyle(
-                            fontSize: 70, fontWeight: FontWeight.bold),
-                        colors: _themeController.isDark
-                            ? Themer.gradientDark.colors
-                            : Themer.gradientLight.colors,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                          color: Colors.white10,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Music Language:  ",
-                            // style: TextStyle(color: Colors.white60, fontSize: 17),
-                          ),
-                          Obx(() => DropdownButton<String>(
-                                // style:
-                                //     TextStyle(color: Colors.white, fontSize: 17),
-                                value: selectedLanguage.value,
-                                dropdownColor: Colors.white,
-                                underline: SizedBox(),
-                                icon: Icon(
-                                  Icons.keyboard_arrow_down,
-                                ),
-                                items: languages.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (_) {
-                                  selectedLanguage.value = _!;
-                                },
-                              )),
-                        ],
-                      )),
-                  SizedBox(height: 16),
-                  TxtButton(
-                      onPressed: () {
-                        GetStorage("user")
-                            .write("lang", selectedLanguage.value);
-                        GetStorage("user").save();
-                        Get.offAll(MainPage());
-                      },
-                      text: "Lat's Play"),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     GetStorage("user").write("lang", selectedLanguage.value);
-                  //     GetStorage("user").save();
-                  //     Get.offAll(MainPage());
-                  //   },
-                  //   child: Container(
-                  //     padding: EdgeInsets.symmetric(vertical: 20),
-                  //     decoration: BoxDecoration(
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //               color: Themer.main,
-                  //               blurRadius: 20,
-                  //               offset: Offset(0, 10))
-                  //         ],
-                  //         gradient: _themeController.isDark
-                  //             ? Themer.gradientDark
-                  //             : Themer.gradientLight,
-                  //         borderRadius: BorderRadius.circular(10)),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       children: [
-                  //         Text(
-                  //           "Let's Play",
-                  //           style: Get.textTheme.titleMedium!.copyWith(color: Themer.light),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  SizedBox(height: 40),
+          // 2. Gradient Overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.4),
+                  Colors.black.withOpacity(0.8),
+                  Colors.black.withOpacity(0.95),
                 ],
               ),
             ),
-          ]),
-        ),
+          ),
+          // 3. Content
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Spacer(flex: 1),
+                  // Header
+                  GradientText(
+                    "Music",
+                    style: TextStyle(
+                      fontSize: 60,
+                      fontWeight: FontWeight.w900,
+                      fontFamily: 'Poppins',
+                      height: 1.0,
+                    ),
+                    colors: [
+                      Color(0xFF00DBDE),
+                      Color(0xFFFC00FF),
+                    ], // Cool gradient
+                  ),
+                  Text(
+                    "Languages.",
+                    style: TextStyle(
+                      fontSize: 60,
+                      fontWeight: FontWeight.w900,
+                      fontFamily: 'Poppins',
+                      color: Colors.white,
+                      height: 1.0,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Select your preferred music language to get the best recommendations.",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  Spacer(flex: 1),
+
+                  // Language Chips
+                  Expanded(
+                    flex: 10,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      ),
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(16),
+                      child: Scrollbar(
+                        // thumbVisibility: true,
+                        thumbVisibility: false,
+                        thickness: 0,
+                        radius: Radius.circular(10),
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Obx(() => Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            alignment: WrapAlignment.center,
+                            children: languages.map((lang) {
+                              bool isSelected = selectedLanguage.value == lang;
+                              return GestureDetector(
+                                onTap: () => selectedLanguage.value = lang,
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 200),
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                  decoration: BoxDecoration(
+                                    gradient: isSelected
+                                        ? LinearGradient(colors: [Color(0xFF00DBDE), Color(0xFFFC00FF)])
+                                        : null,
+                                    color: isSelected ? null : Colors.white.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(30),
+                                    border: isSelected
+                                        ? Border.all(color: Colors.transparent)
+                                        : Border.all(color: Colors.white24),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: Color(0xFFFC00FF).withOpacity(0.4),
+                                              blurRadius: 12,
+                                              offset: Offset(0, 4),
+                                            )
+                                          ]
+                                        : [],
+                                  ),
+                                  child: Text(
+                                    lang,
+                                    style: TextStyle(
+                                      color: isSelected ? Colors.white : Colors.white70,
+                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          )),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 30),
+                  // Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: TxtButton(
+                      onPressed: () {
+                        GetStorage("user").write("lang", selectedLanguage.value);
+                        GetStorage("user").save();
+                        Get.offAll(() => MainPage(), transition: Transition.zoom, duration: Duration(milliseconds: 500));
+                      },
+                      text: "Let's Play",
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

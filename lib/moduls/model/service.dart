@@ -348,12 +348,12 @@ class All {
   factory All.fromJson(Map<String, dynamic> json) => All(
         id: json["id"],
         name: json["name"],
-        role: roleValues.map[json["role"]]!,
+        role: roleValues.map[json["role"]],
         image: json["image"] == null
             ? []
             : List<DownloadUrl>.from(
                 json["image"]!.map((x) => DownloadUrl.fromJson(x))),
-        type: allTypeValues.map[json["type"]]!,
+        type: allTypeValues.map[json["type"]],
         url: json["url"],
       );
 
@@ -447,9 +447,9 @@ final languageValues = EnumValues({
   "english": Language.TELUGU
 });
 
-enum ResultType { SONG }
+enum ResultType { SONG, PLAYLIST }
 
-final resultTypeValues = EnumValues({"song": ResultType.SONG});
+final resultTypeValues = EnumValues({"song": ResultType.SONG, "playlist": ResultType.PLAYLIST});
 
 class EnumValues<T> {
   Map<String, T> map;
