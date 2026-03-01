@@ -1,4 +1,4 @@
-import 'dart:math';
+
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart' hide Data;
@@ -6,7 +6,7 @@ import 'package:get_storage/get_storage.dart' hide Data;
 import 'package:jhumo/main.dart';
 import 'package:jhumo/moduls/controller/collaboration_controller.dart';
 import 'package:jhumo/moduls/service/youtube_service.dart';
-import 'package:jhumo/moduls/service/youtube_audio_source.dart';
+// Removed youtube_audio_source import
 
 
 import 'package:jhumo/moduls/model/lyrics_model.dart';
@@ -93,36 +93,13 @@ class AudioController extends GetxController {
     rs = songs[0];
     print("AudioController: Playing first song: ${rs?.name}");
 
-    List<AudioSource> l =
-        List.generate(suggestedSong!.data!.length, (int index) {
-      return YoutubeAudioSource(
-          suggestedSong!.data![index].id ?? "${Random().nextInt(1000)}",
-          tag: MediaItem(
-            id: suggestedSong!.data![index].id ?? "${Random().nextInt(1000)}",
-            title: suggestedSong!.data![index].name!,
-            artist: suggestedSong!.data![index].artists!.primary != null &&
-                    suggestedSong!.data![index].artists!.primary!.isNotEmpty
-                ? suggestedSong!.data![index].artists!.primary![0].name!
-                : "",
-            artUri: Uri.parse(
-              (suggestedSong!.data![index].image != null &&
-                      suggestedSong!.data![index].image!.isNotEmpty)
-                  ? (suggestedSong!.data![index].image!.length > 1
-                      ? suggestedSong!.data![index].image![1].url!
-                      : suggestedSong!.data![index].image![0].url!)
-                  : "https://default_image_url.png",
-            ),
-            duration: Duration(
-              seconds: suggestedSong!.data![index].duration!,
-            ),
-          ));
-    });
+    List<AudioSource> initialSources = [];
+    AudioSource? currentSource = await _createAudioSource(rs!);
+    if (currentSource != null) initialSources.add(currentSource);
 
-    final playlist = ConcatenatingAudioSource(
-      children: l,
-    );
+    playlist = ConcatenatingAudioSource(children: initialSources);
     try {
-      await player.setAudioSource(playlist);
+      await player.setAudioSource(playlist!);
       player.play();
       print("AudioController: Player started playing");
     } catch (e) {
@@ -135,6 +112,11 @@ class AudioController extends GetxController {
           isPlaying: true,
         ),
         transition: Transition.downToUp);
+
+    // Append the rest sequentially
+    if (songs.length > 1) {
+      _appendSuggestions(songs.sublist(1), playlist!);
+    }
   }
 
   _fetchSong() async {
@@ -274,12 +256,8 @@ class AudioController extends GetxController {
 
   // Initial fetch for a new song (clears previous playlist logic effectively as we start fresh)
   getSuggestedSong() async {
-    // This method is now primarily for the initial setup of a song + its suggestions.
-    // If you want to APPEND, use loadMoreSuggestions.
-
     print("AudioController: getSuggestedSong (Initial) called for ${rs?.name}");
 
-    // 1. Fetch suggestions
     List<Result> newSuggestions = [];
     try {
       if (rs != null) {
@@ -289,7 +267,6 @@ class AudioController extends GetxController {
       print("AudioController: Error fetching suggestions: $e");
     }
 
-    // 2. Prepare the list of songs to play: [Current Song, ...Suggestions]
     if (suggestedSong == null) {
       suggestedSong = SuggestedModel();
     }
@@ -297,23 +274,13 @@ class AudioController extends GetxController {
     // RESET the list with current song + new suggestions
     suggestedSong!.data = [rs!, ...newSuggestions];
 
-    // 3. Create AudioSources
-    List<AudioSource> audioSources = [];
-
-    // 3a. Add Current Song Source
+    List<AudioSource> initialSources = [];
     AudioSource? currentSongSource = await _createAudioSource(rs!);
     if (currentSongSource != null) {
-        audioSources.add(currentSongSource);
+        initialSources.add(currentSongSource);
     }
 
-    // 3b. Add Sources for Suggestions (Lazy loading is better, but here we pre-load source references)
-    // Note: YoutubeAudioSource is lazy by default (it fetches stream url on request).
-    for (var song in newSuggestions) {
-       audioSources.add(_createYoutubeAudioSource(song));
-    }
-
-    // 4. Set Playlist
-    playlist = ConcatenatingAudioSource(children: audioSources);
+    playlist = ConcatenatingAudioSource(children: initialSources);
 
     try {
       await player.setAudioSource(playlist!);
@@ -324,10 +291,13 @@ class AudioController extends GetxController {
     }
 
     update();
+
+    if (newSuggestions.isNotEmpty) {
+      _appendSuggestions(newSuggestions, playlist!);
+    }
   }
 
-  // Load more suggestions and APPEND to the playlist
-  bool _isLoadingMore = false; // Prevent multiple simultaneous fetches
+  bool _isLoadingMore = false;
 
   loadMoreSuggestions() async {
     if (_isLoadingMore) return;
@@ -337,28 +307,13 @@ class AudioController extends GetxController {
     print("AudioController: Loading more suggestions...");
 
     try {
-      // Fetch suggestions based on the LAST song in the current list
       var lastSong = suggestedSong!.data!.last;
       var newSuggestions = await _ytService.getSuggestedSongs(lastSong.id!);
 
-      // Filter out duplicates (optional but good)
-      // var existingIds = suggestedSong!.data!.map((e) => e.id).toSet();
-      // newSuggestions = newSuggestions.where((e) => !existingIds.contains(e.id)).toList();
-
       if (newSuggestions.isNotEmpty) {
-          // Add to data model
           suggestedSong!.data!.addAll(newSuggestions);
-
-          // Create AudioSources
-          List<AudioSource> newSources = [];
-          for (var song in newSuggestions) {
-               newSources.add(_createYoutubeAudioSource(song));
-          }
-
-          // Append to just_audio playlist
           if (playlist != null) {
-              await playlist!.addAll(newSources);
-              print("AudioController: Appended ${newSources.length} songs to playlist.");
+              _appendSuggestions(newSuggestions, playlist!);
           }
       }
     } catch (e) {
@@ -369,15 +324,23 @@ class AudioController extends GetxController {
     }
   }
 
+  _appendSuggestions(List<Result> suggestions, ConcatenatingAudioSource currentPlaylist) async {
+    for (var song in suggestions) {
+      // Stop appending if the player has moved on to a completely new playlist
+      if (playlist != currentPlaylist) {
+        print("AudioController: Playlist changed, stopping background fetch.");
+        break;
+      }
+      AudioSource? source = await _createAudioSource(song);
+      if (playlist == currentPlaylist && source != null) {
+        await currentPlaylist.add(source);
+        print("AudioController: Appended ${song.name} to playlist.");
+      }
+    }
+  }
 
-  // Helper to create AudioSource for a song (tries direct URL first, then Stream)
   Future<AudioSource?> _createAudioSource(Result song) async {
       String imageUrl = _getImageUrl(song);
-
-      // Check for direct download URL (if available and valid)
-      // Note: verify if `downloadUrl` is actually a playable direct link or requires extraction.
-      // Assuming _ytService.getAudioUrl is the way to go for the playing song.
-
       String? streamUrl = await _ytService.getAudioUrl(song.id!);
 
       if (streamUrl != null) {
@@ -385,37 +348,16 @@ class AudioController extends GetxController {
             Uri.parse(streamUrl),
             tag: MediaItem(
               id: song.id!,
-              title: song.name ?? "Unknown",
+              title: song.name ?? "Unknown Title",
               artist: (song.artists?.primary != null && song.artists!.primary!.isNotEmpty)
                   ? song.artists!.primary![0].name!
-                  : "Unknown",
+                  : "Unknown Artist",
               artUri: Uri.parse(imageUrl),
               duration: Duration(seconds: song.duration ?? 0),
             ),
           );
-      } else {
-          // Fallback
-         return _createYoutubeAudioSource(song);
       }
-  }
-
-  // Helper for YoutubeAudioSource (Lazy)
-  AudioSource _createYoutubeAudioSource(Result song) {
-       String imageUrl = _getImageUrl(song);
-       return YoutubeAudioSource(
-            song.id ?? "${Random().nextInt(1000)}",
-            tag: MediaItem(
-              id: song.id ?? "${Random().nextInt(1000)}",
-              title: song.name ?? "Unknown Title",
-              artist: (song.artists?.primary != null &&
-                      song.artists!.primary!.isNotEmpty)
-                  ? song.artists!.primary![0].name ?? ""
-                  : "",
-              artUri: Uri.parse(imageUrl),
-              duration: Duration(
-                seconds: song.duration ?? 0,
-              ),
-            ));
+      return null;
   }
 
   String _getImageUrl(Result song) {
@@ -445,24 +387,16 @@ onNext() {
   }
 
   setToNext(Result r) {
-    if (playlist != null)
-      playlist!.insert(
-          0,
-          YoutubeAudioSource(
-            r.id!,
-            tag: MediaItem(
-              id: r.id!,
-              title: r.name!,
-              artist: r.artists!.primary![0].name!,
-              artUri: Uri.parse(
-                r.image![1].url!,
-              ),
-              duration: Duration(
-                seconds: r.duration!,
-              ),
-              // extras: {"url": r.downloadUrl![2].url!},
-            ),
-          ));
+    if (playlist != null) {
+      _createAudioSource(r).then((source) {
+         if (source != null && playlist != null) {
+            int insertIndex = (player.currentIndex ?? 0) + 1;
+            if (insertIndex > playlist!.length) insertIndex = playlist!.length;
+            playlist!.insert(insertIndex, source);
+            print("AudioController: Set to play next: ${r.name}");
+         }
+      });
+    }
   }
 
   // onPrevious() {

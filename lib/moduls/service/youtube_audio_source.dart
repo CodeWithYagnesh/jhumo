@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:jhumo/moduls/service/youtube_service.dart';
-import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class YoutubeAudioSource extends StreamAudioSource {
   final String videoId;
@@ -14,19 +14,31 @@ class YoutubeAudioSource extends StreamAudioSource {
      try {
       print("YoutubeAudioSource: Requesting stream for $videoId (Range: $start-$end)");
       var info = await _service.getAudioStreamInfo(videoId);
-      var stream = await _service.getStream(info, start: start, end: end);
+
+      var client = http.Client();
+      var request = http.Request('GET', Uri.parse(info.url));
+      if (start != null || end != null) {
+        request.headers['Range'] = 'bytes=${start ?? 0}-${end ?? ""}';
+      }
+
+      var response = await client.send(request);
+      int contentLength = response.contentLength ?? 0;
+
+      // Let just_audio handle source length if valid
+      int? sourceLength;
+      if (contentLength > 0 && start == null && end == null) {
+         sourceLength = contentLength;
+      }
 
       return StreamAudioResponse(
-        sourceLength: info.size.totalBytes,
-        contentLength: info.size.totalBytes,
+        sourceLength: sourceLength,
+        contentLength: contentLength > 0 ? contentLength : null,
         offset: start ?? 0,
-        stream: stream,
-        contentType: info.container.name == 'm4a' ? 'audio/mp4' : 'audio/${info.container.name}',
+        stream: response.stream,
+        contentType: response.headers['content-type'] ?? 'audio/mpeg',
       );
     } catch (e) {
       print("Error in YoutubeAudioSource for $videoId: $e");
-      // Return a 404 or similar error response if possible, or rethrow.
-      // Since we can't easily return an HTTP error code here, we rethrow.
       throw Exception("Failed to load audio stream for $videoId: $e");
     }
   }

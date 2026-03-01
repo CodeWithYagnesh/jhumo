@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:jhumo/components/button.dart';
 import 'package:jhumo/screens/main_page.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 class IntroPage2 extends StatelessWidget {
@@ -17,159 +16,217 @@ class IntroPage2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // 1. Background Image
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    "https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"), // Different high quality music/party image
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // 2. Gradient Overlay
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withOpacity(0.4),
-                  Colors.black.withOpacity(0.8),
-                  Colors.black.withOpacity(0.95),
-                ],
-              ),
-            ),
-          ),
-          // 3. Content
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Spacer(flex: 1),
-                  // Header
-                  GradientText(
-                    "Music",
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.w900,
-                      fontFamily: 'Poppins',
-                      height: 1.0,
-                    ),
-                    colors: [
-                      Color(0xFF00DBDE),
-                      Color(0xFFFC00FF),
-                    ], // Cool gradient
-                  ),
-                  Text(
-                    "Languages.",
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.w900,
-                      fontFamily: 'Poppins',
-                      color: Colors.white,
-                      height: 1.0,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Select your preferred music language to get the best recommendations.",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
-                  ),
-                  Spacer(flex: 1),
+    bool isMobile = Get.width < 750;
 
-                  // Language Chips
-                  Expanded(
-                    flex: 10,
+    return Scaffold(
+      backgroundColor: Color(0xFF121212),
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            constraints: BoxConstraints(maxWidth: 1200),
+            child: Flex(
+              direction: isMobile ? Axis.vertical : Axis.horizontal,
+              children: [
+                // Left Side (or Top on Mobile): Branding/Image
+                Expanded(
+                  flex: isMobile ? 3 : 5,
+                  child: Container(
+                    margin: isMobile ? EdgeInsets.all(20) : EdgeInsets.all(40),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            "https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+                        fit: BoxFit.cover,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          blurRadius: 30,
+                          offset: Offset(0, 10),
+                        )
+                      ]
+                    ),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        borderRadius: BorderRadius.circular(30),
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.8),
+                            Colors.transparent,
+                          ]
+                        )
                       ),
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.all(16),
-                      child: Scrollbar(
-                        // thumbVisibility: true,
-                        thumbVisibility: false,
-                        thickness: 0,
-                        radius: Radius.circular(10),
-                        child: SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
-                          child: Obx(() => Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
-                            alignment: WrapAlignment.center,
-                            children: languages.map((lang) {
-                              bool isSelected = selectedLanguage.value == lang;
-                              return GestureDetector(
-                                onTap: () => selectedLanguage.value = lang,
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 200),
-                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                  decoration: BoxDecoration(
-                                    gradient: isSelected
-                                        ? LinearGradient(colors: [Color(0xFF00DBDE), Color(0xFFFC00FF)])
-                                        : null,
-                                    color: isSelected ? null : Colors.white.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(30),
-                                    border: isSelected
-                                        ? Border.all(color: Colors.transparent)
-                                        : Border.all(color: Colors.white24),
-                                    boxShadow: isSelected
-                                        ? [
-                                            BoxShadow(
-                                              color: Color(0xFFFC00FF).withOpacity(0.4),
-                                              blurRadius: 12,
-                                              offset: Offset(0, 4),
-                                            )
-                                          ]
-                                        : [],
-                                  ),
-                                  child: Text(
-                                    lang,
-                                    style: TextStyle(
-                                      color: isSelected ? Colors.white : Colors.white70,
-                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          )),
-                        ),
-                      ),
+                      padding: EdgeInsets.all(30),
+                      alignment: Alignment.bottomLeft,
+                      child: isMobile ? SizedBox() : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GradientText(
+                            "Music",
+                            style: TextStyle(
+                              fontSize: 60,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'Poppins',
+                              height: 1.0,
+                            ),
+                            colors: [Color(0xFF00DBDE), Color(0xFFFC00FF)],
+                          ),
+                          Text(
+                            "Languages.",
+                            style: TextStyle(
+                              fontSize: 60,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'Poppins',
+                              color: Colors.white,
+                              height: 1.0,
+                            ),
+                          ),
+                        ]
+                      )
                     ),
                   ),
+                ),
 
-                  SizedBox(height: 30),
-                  // Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: TxtButton(
-                      onPressed: () {
-                        GetStorage("user").write("lang", selectedLanguage.value);
-                        GetStorage("user").save();
-                        Get.offAll(() => MainPage(), transition: Transition.zoom, duration: Duration(milliseconds: 500));
-                      },
-                      text: "Let's Play",
+                // Right Side (or Bottom on Mobile): Content & Input
+                Expanded(
+                  flex: isMobile ? 6 : 4,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 30 : 60,
+                        vertical: isMobile ? 0 : 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (isMobile) ...[
+                          GradientText(
+                            "Music",
+                            style: TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'Poppins',
+                              height: 1.0,
+                            ),
+                            colors: [Color(0xFF00DBDE), Color(0xFFFC00FF)],
+                          ),
+                          Text(
+                            "Languages.",
+                            style: TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'Poppins',
+                              color: Colors.white,
+                              height: 1.0,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                        ],
+                        Text(
+                          "Select your preferred music language to get the best recommendations.",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Inter',
+                            color: Colors.white60,
+                            height: 1.5,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+
+                        // Language Chips
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(color: Colors.white.withOpacity(0.05)),
+                            ),
+                            padding: EdgeInsets.all(20),
+                            child: SingleChildScrollView(
+                                physics: BouncingScrollPhysics(),
+                                child: Obx(() => Wrap(
+                                  spacing: 12,
+                                  runSpacing: 12,
+                                  alignment: WrapAlignment.start,
+                                  children: languages.map((lang) {
+                                    bool isSelected = selectedLanguage.value == lang;
+                                    return GestureDetector(
+                                      onTap: () => selectedLanguage.value = lang,
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 200),
+                                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                        decoration: BoxDecoration(
+                                          color: isSelected ? Colors.white : Colors.white.withOpacity(0.05),
+                                          borderRadius: BorderRadius.circular(30),
+                                          border: Border.all(
+                                            color: isSelected ? Colors.white : Colors.white.withOpacity(0.1),
+                                          ),
+                                          boxShadow: isSelected
+                                              ? [
+                                                  BoxShadow(
+                                                    color: Colors.white.withOpacity(0.2),
+                                                    blurRadius: 10,
+                                                    offset: Offset(0, 4),
+                                                  )
+                                                ]
+                                              : [],
+                                        ),
+                                        child: Text(
+                                          lang,
+                                          style: TextStyle(
+                                            color: isSelected ? Colors.black : Colors.white70,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                            fontFamily: 'Inter',
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                )),
+                              ),
+                          ),
+                        ),
+
+                        SizedBox(height: 30),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              GetStorage("user").write("lang", selectedLanguage.value);
+                              GetStorage("user").save();
+                              Get.offAll(() => MainPage(), transition: Transition.zoom, duration: Duration(milliseconds: 500));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              "Let's Play",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: isMobile ? 20 : 0),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 20),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

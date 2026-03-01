@@ -1,0 +1,335 @@
+Analyzing jhumo...                                              
+
+warning - Unused import: 'package:get/get.dart' - lib\components\album_tile.dart:2:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\components\album_tile.dart:17:92 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\components\button.dart:19:38 - deprecated_member_use
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\components\glass_container.dart:1:8 - unnecessary_import
+warning - Unused import: 'package:jhumo/moduls/controller/theme_controller.dart' - lib\components\glass_container.dart:5:8 - unused_import
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: GlassContainer.radius - lib\components\glass_container.dart:8:7 - must_be_immutable
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\components\music_tile.dart:1:8 - unnecessary_import
+warning - Unused import: 'package:jhumo/moduls/model/themer.dart' - lib\components\music_tile.dart:6:8 - unused_import
+warning - Unused import: 'package:jhumo/components/button.dart' - lib\components\playlist_tlle.dart:3:8 - unused_import
+warning - Unused import: 'package:jhumo/components/glass_container.dart' - lib\components\playlist_tlle.dart:4:8 - unused_import
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\components\playlist_tlle.dart:15:3 - prefer_const_constructors_in_immutables
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\components\playlist_tlle.dart:33:53 - deprecated_member_use
+   info - Use 'isEmpty' instead of 'length' to test whether the collection is empty - lib\components\playlist_tlle.dart:82:36 - prefer_is_empty
+   info - Use 'isEmpty' instead of 'length' to test whether the collection is empty - lib\components\playlist_tlle.dart:88:33 - prefer_is_empty
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\components\playlist_tlle.dart:98:48 - deprecated_member_use
+   info - Use 'isEmpty' instead of 'length' to test whether the collection is empty - lib\components\playlist_tlle.dart:104:33 - prefer_is_empty
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\components\playlist_tlle.dart:108:62 - deprecated_member_use
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: JhumoPopupMenu._playlistController - lib\components\popup_menu.dart:7:7 - must_be_immutable
+   info - The private field _playlistController could be 'final' - lib\components\popup_menu.dart:11:7 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\components\recent_music_tile.dart:31:41 - deprecated_member_use
+   info - Unnecessary instance of 'Container' - lib\components\search_btn.dart:8:12 - avoid_unnecessary_containers
+warning - Unused import: 'package:firebase_database/firebase_database.dart' - lib\main.dart:2:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/controller/theme_controller.dart' - lib\main.dart:7:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/album_page/spotify_album_view.dart' - lib\main.dart:10:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/home_page.dart' - lib\main.dart:11:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/opened_playlist_page.dart' - lib\main.dart:15:8 - unused_import
+   info - The variable name 'main_result' isn't a lowerCamelCase identifier - lib\main.dart:22:9 - non_constant_identifier_names
+warning - Unused import: 'package:jhumo/moduls/data/variable.dart' - lib\moduls\controller\artist_controller.dart:5:8 - unused_import
+   info - The local variable '_ytService' starts with an underscore - lib\moduls\controller\artist_controller.dart:17:20 - no_leading_underscores_for_local_identifiers
+   info - The private field _recentStorage could be 'final' - lib\moduls\controller\audio_controller.dart:32:14 - prefer_final_fields
+   info - The private field _ytService could be 'final' - lib\moduls\controller\audio_controller.dart:37:18 - prefer_final_fields
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:83:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:90:5 - avoid_print
+   info - The 'if' statement could be replaced by a null-aware assignment - lib\moduls\controller\audio_controller.dart:91:5 - prefer_conditional_assignment
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:94:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:127:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:129:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:141:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:146:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:152:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:161:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:165:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:167:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:171:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:178:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:189:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:194:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:280:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:289:7 - avoid_print
+   info - The 'if' statement could be replaced by a null-aware assignment - lib\moduls\controller\audio_controller.dart:293:5 - prefer_conditional_assignment
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:321:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:323:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:337:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:361:15 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:365:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:435:8 - avoid_print
+   info - Statements in an if should be enclosed in a block - lib\moduls\controller\audio_controller.dart:449:7 - curly_braces_in_flow_control_structures
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:527:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\audio_controller.dart:540:7 - avoid_print
+warning - Unused import: 'package:jhumo/moduls/model/service.dart' - lib\moduls\controller\collaboration_controller.dart:12:8 - unused_import
+   info - The private field _ytService could be 'final' - lib\moduls\controller\collaboration_controller.dart:27:18 - prefer_final_fields
+   info - Don't invoke 'print' in production code - lib\moduls\controller\collaboration_controller.dart:102:5 - avoid_print
+warning - The value of the local variable 'c' isn't used - lib\moduls\controller\collaboration_controller.dart:161:28 - unused_local_variable
+   info - The private field _ytService could be 'final' - lib\moduls\controller\music_controller.dart:15:18 - prefer_final_fields
+   info - The private field _var could be 'final' - lib\moduls\controller\music_controller.dart:16:13 - prefer_final_fields
+warning - Unused import: 'package:jhumo/moduls/data/variable.dart' - lib\moduls\controller\playlist_controller.dart:3:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/methods.dart' - lib\moduls\controller\playlist_controller.dart:4:8 - unused_import
+   info - The private field _ytService could be 'final' - lib\moduls\controller\playlist_controller.dart:16:18 - prefer_final_fields
+warning - Unused import: 'package:jhumo/moduls/data/variable.dart' - lib\moduls\controller\populer_controller.dart:4:8 - unused_import
+   info - The private field _ytService could be 'final' - lib\moduls\controller\populer_controller.dart:14:18 - prefer_final_fields
+   info - The local variable '_storage' starts with an underscore - lib\moduls\controller\populer_controller.dart:18:9 - no_leading_underscores_for_local_identifiers
+warning - Unused import: 'package:jhumo/moduls/data/variable.dart' - lib\moduls\controller\search_controller.dart:3:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/methods.dart' - lib\moduls\controller\search_controller.dart:6:8 - unused_import
+   info - The private field _ytService could be 'final' - lib\moduls\controller\search_controller.dart:15:18 - prefer_final_fields
+   info - Don't invoke 'print' in production code - lib\moduls\controller\search_controller.dart:97:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\controller\search_controller.dart:103:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\methods.dart:2:23 - avoid_print
+   info - Unnecessary braces in a string interpolation - lib\moduls\methods.dart:2:43 - unnecessary_brace_in_string_interps
+   info - The file name 'Search_model.dart' isn't a lower_case_with_underscores identifier - lib\moduls\model\Search_model.dart:1:1 - file_names
+   info - Unnecessary use of '??' with 'null' - lib\moduls\model\service.dart:211:33 - unnecessary_null_in_if_null_operators
+   info - Unnecessary use of '??' with 'null' - lib\moduls\model\service.dart:212:53 - unnecessary_null_in_if_null_operators
+   info - Unnecessary use of '??' with 'null' - lib\moduls\model\service.dart:223:59 - unnecessary_null_in_if_null_operators
+   info - The constant name 'THE_12_KBPS' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:393:3 - constant_identifier_names
+   info - The constant name 'THE_150_X150' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:394:3 - constant_identifier_names
+   info - The constant name 'THE_160_KBPS' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:395:3 - constant_identifier_names
+   info - The constant name 'THE_320_KBPS' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:396:3 - constant_identifier_names
+   info - The constant name 'THE_48_KBPS' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:397:3 - constant_identifier_names
+   info - The constant name 'THE_500_X500' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:398:3 - constant_identifier_names
+   info - The constant name 'THE_50_X50' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:399:3 - constant_identifier_names
+   info - The constant name 'THE_96_KBPS' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:400:3 - constant_identifier_names
+   info - The constant name 'FEATURED_ARTISTS' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:415:3 - constant_identifier_names
+   info - The constant name 'LYRICIST' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:416:3 - constant_identifier_names
+   info - The constant name 'MUSIC' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:417:3 - constant_identifier_names
+   info - The constant name 'PRIMARY_ARTISTS' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:418:3 - constant_identifier_names
+   info - The constant name 'SINGER' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:419:3 - constant_identifier_names
+   info - The constant name 'STARRING' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:420:3 - constant_identifier_names
+   info - The constant name 'ARTIST' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:432:16 - constant_identifier_names
+   info - The constant name 'BHOJPURI' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:437:3 - constant_identifier_names
+   info - The constant name 'HINDI' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:438:3 - constant_identifier_names
+   info - The constant name 'TELUGU' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:439:3 - constant_identifier_names
+   info - The constant name 'ENGLISH' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:440:3 - constant_identifier_names
+   info - The constant name 'SONG' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:450:19 - constant_identifier_names
+   info - The constant name 'PLAYLIST' isn't a lowerCamelCase identifier - lib\moduls\model\service.dart:450:25 - constant_identifier_names
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\moduls\model\themer.dart:12:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\moduls\model\themer.dart:14:42 - deprecated_member_use
+warning - 'StreamAudioSource' is experimental and could be removed or changed at any time - lib\moduls\service\youtube_audio_source.dart:6:34 - experimental_member_use
+   info - Parameter 'tag' could be a super parameter - lib\moduls\service\youtube_audio_source.dart:10:3 - use_super_parameters
+warning - 'StreamAudioResponse' is experimental and could be removed or changed at any time - lib\moduls\service\youtube_audio_source.dart:13:10 - experimental_member_use
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_audio_source.dart:15:7 - avoid_print
+warning - 'StreamAudioResponse' is experimental and could be removed or changed at any time - lib\moduls\service\youtube_audio_source.dart:33:14 - experimental_member_use
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_audio_source.dart:41:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:35:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:48:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:61:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:74:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:87:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:100:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:115:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:128:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:149:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\moduls\service\youtube_service.dart:164:9 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\about_page.dart:23:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\about_page.dart:26:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\about_page.dart:77:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\about_page.dart:266:39 - deprecated_member_use
+   info - The import of 'package:flutter/cupertino.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\album_info.dart:1:8 - unnecessary_import
+   info - The import of 'package:flutter/painting.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\album_info.dart:3:8 - unnecessary_import
+   info - The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\album_info.dart:4:8 - unnecessary_import
+   info - The import of 'package:flutter/widgets.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\album_info.dart:5:8 - unnecessary_import
+   info - Parameter 'key' could be a super parameter - lib\screens\album_page\album_info.dart:9:9 - use_super_parameters
+   info - The import of 'package:flutter/cupertino.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\album_songs_list.dart:1:8 - unnecessary_import
+   info - The import of 'package:flutter/painting.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\album_songs_list.dart:3:8 - unnecessary_import
+   info - The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\album_songs_list.dart:4:8 - unnecessary_import
+   info - The import of 'package:flutter/widgets.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\album_songs_list.dart:5:8 - unnecessary_import
+   info - Parameter 'key' could be a super parameter - lib\screens\album_page\album_songs_list.dart:8:9 - use_super_parameters
+   info - The import of 'package:flutter/cupertino.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\play_paus_button.dart:1:8 - unnecessary_import
+   info - The import of 'package:flutter/painting.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\play_paus_button.dart:3:8 - unnecessary_import
+   info - The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\play_paus_button.dart:4:8 - unnecessary_import
+   info - The import of 'package:flutter/widgets.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\play_paus_button.dart:5:8 - unnecessary_import
+warning - Unused import: 'package:jhumo/screens/album_page/const.dart' - lib\screens\album_page\play_paus_button.dart:6:8 - unused_import
+   info - Parameter 'key' could be a super parameter - lib\screens\album_page\play_paus_button.dart:9:9 - use_super_parameters
+   info - Parameter 'key' could be a super parameter - lib\screens\album_page\sliver_custom_appbar\custom_flexible_space.dart:5:9 - use_super_parameters
+   info - Parameter 'key' could be a super parameter - lib\screens\album_page\sliver_custom_appbar\fixed_appbar.dart:4:9 - use_super_parameters
+warning - Unused import: 'dart:developer' - lib\screens\album_page\sliver_custom_appbar\sliver_appbar_delegate.dart:1:8 - unused_import
+   info - Invalid use of a private type in a public API - lib\screens\album_page\sliver_custom_appbar\sliver_appbar_delegate.dart:19:9 - library_private_types_in_public_api
+   info - Parameter 'key' could be a super parameter - lib\screens\album_page\sliver_custom_appbar\sliver_custom_appbar.dart:10:9 - use_super_parameters
+   info - Don't invoke 'print' in production code - lib\screens\album_page\sliver_custom_appbar\sliver_custom_appbar.dart:36:15 - avoid_print
+   info - The import of 'package:flutter/cupertino.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\spotify_album_view.dart:1:8 - unnecessary_import
+   info - The import of 'package:flutter/painting.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\spotify_album_view.dart:3:8 - unnecessary_import
+   info - The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\screens\album_page\spotify_album_view.dart:4:8 - unnecessary_import
+   info - The import of 'package:flutter/widgets.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\album_page\spotify_album_view.dart:5:8 - unnecessary_import
+   info - Parameter 'key' could be a super parameter - lib\screens\album_page\spotify_album_view.dart:13:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\screens\album_page\spotify_album_view.dart:16:3 - library_private_types_in_public_api
+warning - The left operand can't be null, so the right operand is never executed - lib\screens\collaboration_page.dart:75:102 - dead_null_aware_expression
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\collaboration_page.dart:82:55 - deprecated_member_use
+warning - The receiver can't be null, so the null-aware operator '?.' is unnecessary - lib\screens\collaboration_page.dart:91:68 - invalid_null_aware_operator
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\collaboration_page.dart:114:53 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\collaboration_page.dart:126:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\collaboration_page.dart:160:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\collaboration_page.dart:183:53 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\collaboration_page.dart:224:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\collaboration_page.dart:229:162 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\collaboration_page.dart:281:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\collaboration_page.dart:283:48 - deprecated_member_use
+warning - Unused import: 'package:flutter/foundation.dart' - lib\screens\fav_page.dart:1:8 - unused_import
+warning - Unused import: 'package:jhumo/main.dart' - lib\screens\fav_page.dart:5:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\fav_page.dart:63:48 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\screens\fav_page.dart:80:41 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\fav_page.dart:103:65 - deprecated_member_use
+   info - Unnecessary instance of 'Container' - lib\screens\fav_page.dart:153:33 - avoid_unnecessary_containers
+warning - Unused import: 'package:http/http.dart' - lib\screens\home_page.dart:4:8 - unused_import
+warning - Unused import: 'package:jhumo/components/album_tile.dart' - lib\screens\home_page.dart:5:8 - unused_import
+warning - Unused import: 'package:jhumo/components/artist_tile.dart' - lib\screens\home_page.dart:6:8 - unused_import
+warning - Unused import: 'package:jhumo/components/glass_container.dart' - lib\screens\home_page.dart:7:8 - unused_import
+warning - Unused import: 'package:jhumo/components/label.dart' - lib\screens\home_page.dart:8:8 - unused_import
+warning - Unused import: 'package:jhumo/components/music_tile.dart' - lib\screens\home_page.dart:9:8 - unused_import
+warning - Unused import: 'package:jhumo/components/recent_music_tile.dart' - lib\screens\home_page.dart:10:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/controller/artist_controller.dart' - lib\screens\home_page.dart:11:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/methods.dart' - lib\screens\home_page.dart:14:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/controller/populer_controller.dart' - lib\screens\home_page.dart:16:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/artists_song.dart' - lib\screens\home_page.dart:17:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/themer.dart' - lib\screens\home_page.dart:18:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/opened_artist_page.dart' - lib\screens\home_page.dart:19:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/opened_playlist_page.dart' - lib\screens\home_page.dart:20:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/playlists_page.dart' - lib\screens\home_page.dart:22:8 - unused_import
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: HomePage.audioController, HomePage._themeController - lib\screens\home_page.dart:24:7 - must_be_immutable
+   info - The private field _themeController could be 'final' - lib\screens\home_page.dart:27:7 - prefer_final_fields
+warning - The value of the field '_themeController' isn't used - lib\screens\home_page.dart:27:7 - unused_field
+warning - The value of the local variable 'name' isn't used - lib\screens\home_page.dart:31:12 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_page.dart:158:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_page.dart:176:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_page.dart:193:59 - deprecated_member_use
+   info - The referenced identifier is a wildcard - lib\screens\home_page.dart:215:19 - no_wildcard_variable_uses
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\home_page.dart:216:24 - sized_box_for_whitespace
+   info - The referenced identifier is a wildcard - lib\screens\home_page.dart:224:39 - no_wildcard_variable_uses
+   info - The referenced identifier is a wildcard - lib\screens\home_page.dart:231:29 - no_wildcard_variable_uses
+   info - The referenced identifier is a wildcard - lib\screens\home_page.dart:249:38 - no_wildcard_variable_uses
+   info - The referenced identifier is a wildcard - lib\screens\home_page.dart:253:42 - no_wildcard_variable_uses
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\home_page.dart:262:38 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_page.dart:274:67 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_page.dart:296:63 - deprecated_member_use
+warning - The declaration '_greeting' isn't referenced - lib\screens\home_page.dart:333:10 - unused_element
+warning - Unused import: 'package:jhumo/moduls/controller/theme_controller.dart' - lib\screens\intro_page.dart:5:8 - unused_import
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: IntroPage._nameController - lib\screens\intro_page.dart:10:7 - must_be_immutable
+   info - The private field _nameController could be 'final' - lib\screens\intro_page.dart:12:7 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page.dart:37:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page.dart:38:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page.dart:39:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page.dart:74:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page.dart:91:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page.dart:93:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page2.dart:40:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page2.dart:41:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page2.dart:42:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page2.dart:94:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page2.dart:96:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page2.dart:122:77 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\intro_page2.dart:130:72 - deprecated_member_use
+warning - Unused import: 'package:jhumo/main.dart' - lib\screens\main_page.dart:5:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/controller/page_controller.dart' - lib\screens\main_page.dart:7:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/fav_page.dart' - lib\screens\main_page.dart:9:8 - unused_import
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\main_page.dart:19:3 - prefer_const_constructors_in_immutables
+   info - The private field _audioController could be 'final' - lib\screens\main_page.dart:26:7 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_page.dart:105:51 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\main_page.dart:121:25 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_page.dart:211:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_page.dart:346:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_page.dart:529:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_page.dart:531:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_page.dart:534:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_page.dart:560:47 - deprecated_member_use
+warning - Unused import: 'dart:developer' - lib\screens\opened_album_page.dart:1:8 - unused_import
+   info - The import of 'package:flutter/widgets.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\opened_album_page.dart:4:8 - unnecessary_import
+warning - Unused import: 'package:jhumo/moduls/model/Search_model.dart' - lib\screens\opened_album_page.dart:8:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/controller/playlist_controller.dart' - lib\screens\opened_album_page.dart:9:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/artists_song.dart' - lib\screens\opened_album_page.dart:11:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/playlists_song.dart' - lib\screens\opened_album_page.dart:12:8 - unused_import
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\opened_album_page.dart:21:3 - prefer_const_constructors_in_immutables
+   info - Don't invoke 'print' in production code - lib\screens\opened_album_page.dart:49:21 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_album_page.dart:58:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_album_page.dart:85:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_album_page.dart:92:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_album_page.dart:106:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_album_page.dart:107:55 - deprecated_member_use
+warning - Unused import: 'dart:developer' - lib\screens\opened_artist_page.dart:1:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/Search_model.dart' - lib\screens\opened_artist_page.dart:7:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/controller/playlist_controller.dart' - lib\screens\opened_artist_page.dart:8:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/album_song.dart' - lib\screens\opened_artist_page.dart:9:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/playlists_song.dart' - lib\screens\opened_artist_page.dart:11:8 - unused_import
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\opened_artist_page.dart:19:3 - prefer_const_constructors_in_immutables
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_artist_page.dart:53:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_artist_page.dart:83:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_artist_page.dart:104:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_artist_page.dart:105:55 - deprecated_member_use
+warning - Unused import: 'dart:developer' - lib\screens\opened_playlist_page.dart:1:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/Search_model.dart' - lib\screens\opened_playlist_page.dart:7:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/controller/playlist_controller.dart' - lib\screens\opened_playlist_page.dart:8:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/album_song.dart' - lib\screens\opened_playlist_page.dart:9:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/artists_song.dart' - lib\screens\opened_playlist_page.dart:10:8 - unused_import
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\opened_playlist_page.dart:19:3 - prefer_const_constructors_in_immutables
+   info - Don't invoke 'print' in production code - lib\screens\opened_playlist_page.dart:50:21 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_playlist_page.dart:58:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_playlist_page.dart:88:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_playlist_page.dart:95:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_playlist_page.dart:111:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\opened_playlist_page.dart:112:55 - deprecated_member_use
+warning - Unused import: 'package:jhumo/components/label.dart' - lib\screens\player_page.dart:6:8 - unused_import
+warning - Unused import: 'package:jhumo/components/popup_menu.dart' - lib\screens\player_page.dart:7:8 - unused_import
+warning - Unused import: 'package:jhumo/components/recent_music_tile.dart' - lib\screens\player_page.dart:8:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/themer.dart' - lib\screens\player_page.dart:14:8 - unused_import
+warning - Unused import: 'package:url_launcher/url_launcher_string.dart' - lib\screens\player_page.dart:16:8 - unused_import
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: PlayerPage._themeController - lib\screens\player_page.dart:26:7 - must_be_immutable
+   info - The private field _themeController could be 'final' - lib\screens\player_page.dart:31:7 - prefer_final_fields
+warning - The value of the field '_themeController' isn't used - lib\screens\player_page.dart:31:7 - unused_field
+   info - The local variable '_player' starts with an underscore - lib\screens\player_page.dart:51:17 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_player' starts with an underscore - lib\screens\player_page.dart:55:19 - no_leading_underscores_for_local_identifiers
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:81:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:94:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:95:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:96:42 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\player_page.dart:159:60 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:229:67 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:244:63 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:246:82 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:259:71 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:303:71 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:331:66 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:332:70 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:338:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:356:109 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:378:69 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:385:76 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:413:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:431:95 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:432:90 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\player_page.dart:440:64 - deprecated_member_use
+warning - Unused import: 'package:jhumo/components/glass_container.dart' - lib\screens\playlist_page.dart:4:8 - unused_import
+warning - Unused import: 'package:jhumo/components/playlist_tlle.dart' - lib\screens\playlist_page.dart:5:8 - unused_import
+warning - Unused import: 'package:jhumo/components/recent_music_tile.dart' - lib\screens\playlist_page.dart:6:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/methods.dart' - lib\screens\playlist_page.dart:9:8 - unused_import
+warning - Unused import: 'package:jhumo/moduls/model/themer.dart' - lib\screens\playlist_page.dart:11:8 - unused_import
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\playlist_page.dart:16:3 - prefer_const_constructors_in_immutables
+warning - The value of the local variable 'songIds' isn't used - lib\screens\playlist_page.dart:24:25 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\playlist_page.dart:65:87 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\playlist_page.dart:139:50 - deprecated_member_use
+warning - Unused import: 'dart:math' - lib\screens\playlists_page.dart:1:8 - unused_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\playlists_page.dart:2:8 - unnecessary_import
+warning - Unused import: 'package:jhumo/moduls/controller/audio_controller.dart' - lib\screens\playlists_page.dart:5:8 - unused_import
+warning - Unused import: 'package:jhumo/screens/player_page.dart' - lib\screens\playlists_page.dart:9:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\playlists_page.dart:48:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\playlists_page.dart:127:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\playlists_page.dart:128:31 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\playlists_page.dart:143:25 - sized_box_for_whitespace
+warning - Unnecessary cast - lib\screens\playlists_page.dart:203:26 - unnecessary_cast
+   info - The local variable '_txt' starts with an underscore - lib\screens\playlists_page.dart:267:27 - no_leading_underscores_for_local_identifiers
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\playlists_page.dart:278:35 - deprecated_member_use
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\setting_page.dart:1:8 - unnecessary_import
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\setting_page.dart:11:3 - prefer_const_constructors_in_immutables
+   info - The private field _themeController could be 'final' - lib\screens\setting_page.dart:18:7 - prefer_final_fields
+warning - The value of the field '_themeController' isn't used - lib\screens\setting_page.dart:18:7 - unused_field
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\setting_page.dart:56:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\setting_page.dart:61:56 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\setting_page.dart:115:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\setting_page.dart:175:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\setting_page.dart:261:32 - deprecated_member_use
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\side_bar.dart:7:3 - prefer_const_constructors_in_immutables
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\side_bar.dart:76:63 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\side_bar.dart:107:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\side_bar.dart:145:67 - deprecated_member_use
+   info - Unnecessary instance of 'Container' - lib\screens\side_player.dart:8:12 - avoid_unnecessary_containers
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\verify_page.dart:11:16 - sized_box_for_whitespace
+   info - The file name 'iosBackground.dart' isn't a lower_case_with_underscores identifier - lib\service\methods\iosBackground.dart:1:1 - file_names
+

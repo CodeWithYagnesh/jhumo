@@ -20,31 +20,6 @@ import 'package:jhumo/screens/opened_artist_page.dart';
 import 'package:jhumo/screens/opened_playlist_page.dart';
 import 'package:jhumo/screens/player_page.dart';
 import 'package:jhumo/screens/playlists_page.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart';
-import 'package:jhumo/components/album_tile.dart';
-import 'package:jhumo/components/artist_tile.dart';
-import 'package:jhumo/components/glass_container.dart';
-import 'package:jhumo/components/label.dart'; // Ensure this component is compatible or replace usage
-import 'package:jhumo/components/music_tile.dart';
-import 'package:jhumo/components/recent_music_tile.dart';
-import 'package:jhumo/moduls/controller/artist_controller.dart';
-import 'package:jhumo/moduls/controller/audio_controller.dart';
-import 'package:jhumo/moduls/controller/theme_controller.dart';
-import 'package:jhumo/moduls/methods.dart';
-import 'package:jhumo/moduls/controller/music_controller.dart';
-import 'package:jhumo/moduls/controller/populer_controller.dart';
-import 'package:jhumo/moduls/model/artists_song.dart';
-import 'package:jhumo/moduls/model/themer.dart';
-import 'package:jhumo/screens/opened_artist_page.dart';
-import 'package:jhumo/screens/opened_playlist_page.dart';
-import 'package:jhumo/screens/player_page.dart';
-import 'package:jhumo/screens/playlists_page.dart';
-// import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});

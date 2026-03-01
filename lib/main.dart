@@ -1,25 +1,20 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:jhumo/moduls/controller/theme_controller.dart';
 import 'package:jhumo/moduls/model/service.dart';
 import 'package:jhumo/moduls/model/themer.dart';
-import 'package:jhumo/screens/album_page/spotify_album_view.dart';
-import 'package:jhumo/screens/home_page.dart';
 import 'package:jhumo/screens/intro_page.dart';
 import 'package:jhumo/screens/intro_page2.dart';
 import 'package:jhumo/screens/main_page.dart';
-import 'package:jhumo/screens/opened_playlist_page.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 import 'firebase_options.dart';
 
-AudioPlayer player = AudioPlayer();
-Result? main_result;
+late AudioPlayer player;
+Result? mainResult;
 void main() async {
   FlutterNativeSplash.preserve(
       widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
@@ -42,6 +37,7 @@ void main() async {
       androidNotificationOngoing: true,
       androidNotificationClickStartsActivity: true,
       notificationColor: Colors.red);
+  player = AudioPlayer();
   FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
