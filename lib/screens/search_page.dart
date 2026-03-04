@@ -5,11 +5,27 @@ import 'package:jhumo/moduls/service/youtube_service.dart';
 import 'package:jhumo/screens/player_page.dart';
 import 'package:jhumo/screens/opened_playlist_page.dart';
 
-class SearchPage extends StatelessWidget {
-  SearchPage({super.key});
+class SearchPage extends StatefulWidget {
+  final String? initialQuery;
+  SearchPage({super.key, this.initialQuery});
 
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
   final TextEditingController _textController = TextEditingController();
-  final SearchControl _searchController = Get.put(SearchControl(""));
+  late SearchControl _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = Get.put(SearchControl(widget.initialQuery ?? ""));
+    _textController.text = widget.initialQuery ?? "";
+    if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
+       _searchController.searchSong(widget.initialQuery!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +45,14 @@ class SearchPage extends StatelessWidget {
               child: Row(
                 children: [
                   SizedBox(width: 16),
-                  Icon(Icons.search, color: Colors.white54),
+                  GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                  ),
+                  SizedBox(width: 16),
+                  Icon(Icons.search, color: Colors.white),
                   SizedBox(width: 12),
                   Expanded(
                     child: TextField(

@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jhumo/moduls/model/service.dart';
-import 'package:jhumo/moduls/model/themer.dart';
 
 class MusicTile extends StatelessWidget {
   final Result rs;

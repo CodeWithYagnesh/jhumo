@@ -147,7 +147,7 @@ class _SettingPageState extends State<SettingPage> {
                      _buildSettingsTile(
                       icon: Icons.info_outline_rounded,
                       title: "About Jhumo",
-                      subtitle: "Version 1.0.0",
+                      subtitle: "Version 2.0.0",
                       onTap: () => Get.to(AboutPage()),
                     ),
                   ],

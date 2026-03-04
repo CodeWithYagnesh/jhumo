@@ -16,12 +16,10 @@ class YoutubeService {
   factory YoutubeService() => _instance;
   YoutubeService._internal();
 
-  // For Android emulator it should be 10.0.2.2, for real device/windows it should be network IP or localhost
   String get baseUrl {
-    if (!kIsWeb && Platform.isAndroid) {
-      return "http://192.168.1.8:8000";
-    }
-    return "http://127.0.0.1:8000";
+    // return "https://yagneshjariwala-music-api.hf.space";
+    // return "http://192.168.1.8:8000";
+    return "https://music-api.yagnesh.cloud";
   }
 
   Future<List<Result>> searchSongs(String query) async {

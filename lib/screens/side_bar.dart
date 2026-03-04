@@ -12,7 +12,7 @@ class SideBar extends StatelessWidget {
 
     return Container(
       width: 250,
-      color: Color(0xFF151515), // YouTube Music sidebar dark code
+      color: Colors.transparent, // YouTube Music sidebar dark code
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -57,35 +57,32 @@ class SideBar extends StatelessWidget {
                        bool isSelected = controller.currentScreen == index;
                        return InkWell(
                          onTap: () {
-                           // Try to update main page's current state if possible, or use a global route
-                           // Since MainPage handles its own state (currentPage),
-                           // we should probably navigate via Get material routing or event bus
-                           // For now, let's assume ScreenController is used in MainPage (which we didn't hook up earlier)
-                           // Let's hook up the ScreenController in the updated sidebar navigation!
                            controller.changePage(index);
-
-                           // Note: MainPage currently uses a local `currentPage`.
-                           // For a true global sidebar, MainPage needs to listen to ScreenController.
-                           // We will fix that connection shortly.
                          },
-                         borderRadius: BorderRadius.circular(8),
-                         child: Container(
+                         borderRadius: BorderRadius.circular(12),
+                         child: AnimatedContainer(
+                           duration: Duration(milliseconds: 200),
                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                            margin: EdgeInsets.only(bottom: 4),
                            decoration: BoxDecoration(
-                             color: isSelected ? Colors.white.withOpacity(0.1) : Colors.transparent,
-                             borderRadius: BorderRadius.circular(8)
+                             color: isSelected ? Color(0xFFFF0055).withOpacity(0.15) : Colors.transparent,
+                             borderRadius: BorderRadius.circular(12),
+                             border: isSelected ? Border.all(color: Color(0xFFFF0055).withOpacity(0.3)) : Border.all(color: Colors.transparent),
                            ),
                            child: Row(
                              children: [
-                               Icon(icon, color: isSelected ? Colors.white : Colors.white70, size: 24),
+                               Icon(
+                                 icon,
+                                 color: isSelected ? Color(0xFFFF0055) : Colors.white70,
+                                 size: 24,
+                               ),
                                SizedBox(width: 16),
                                Text(
                                  label,
                                  style: TextStyle(
                                    fontFamily: 'Inter',
                                    color: isSelected ? Colors.white : Colors.white70,
-                                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                    fontSize: 15
                                  )
                                )
@@ -103,35 +100,35 @@ class SideBar extends StatelessWidget {
                         navItem(icon: Icons.library_music_rounded, label: "Library", index: 2),
                         navItem(icon: Icons.settings_rounded, label: "Settings", index: 3), // Replaced Favorite with Settings/Library index matching pages list
 
-                        SizedBox(height: 24),
-                        Divider(color: Colors.white.withOpacity(0.1)),
-                        SizedBox(height: 16),
+                        // SizedBox(height: 24),
+                        // Divider(color: Colors.white.withOpacity(0.1)),
+                        // SizedBox(height: 16),
 
                         // Playlists Section Header
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                          child: Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                             children: [
-                                Text(
-                                  "PLAYLISTS",
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                    letterSpacing: 1.0,
-                                    color: Colors.white54
-                                  )
-                                ),
-                                Icon(Icons.add_rounded, color: Colors.white54, size: 18)
-                             ]
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                        //   child: Row(
+                        //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //      children: [
+                        //         Text(
+                        //           "PLAYLISTS",
+                        //           style: TextStyle(
+                        //             fontFamily: 'Inter',
+                        //             fontWeight: FontWeight.bold,
+                        //             fontSize: 12,
+                        //             letterSpacing: 1.0,
+                        //             color: Colors.white54
+                        //           )
+                        //         ),
+                        //         Icon(Icons.add_rounded, color: Colors.white54, size: 18)
+                        //      ]
+                        //   ),
+                        // ),
 
-                        // Demo Playlist Items
-                        _playlistItem("Liked Songs"),
-                        _playlistItem("Workout Hits"),
-                        _playlistItem("Acoustic Chill"),
+                        // // Demo Playlist Items
+                        // _playlistItem("Liked Songs"),
+                        // _playlistItem("Workout Hits"),
+                        // _playlistItem("Acoustic Chill"),
                       ],
                     );
                   }),
@@ -139,41 +136,6 @@ class SideBar extends StatelessWidget {
           ),
 
           // Bottom User Profile Area
-          Container(
-            padding: EdgeInsets.all(24),
-            decoration: BoxDecoration(
-               border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05)))
-            ),
-            child: Row(
-               children: [
-                  CircleAvatar(
-                     radius: 18,
-                     backgroundColor: Color(0xFF333333),
-                     child: Icon(Icons.person, color: Colors.white, size: 20)
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Text(
-                           name.isNotEmpty ? name : "User",
-                           style: TextStyle(
-                             fontFamily: 'Inter', color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14
-                           )
-                         ),
-                         Text(
-                           "Free Plan",
-                           style: TextStyle(
-                             fontFamily: 'Inter', color: Colors.white54, fontSize: 12
-                           )
-                         )
-                      ]
-                    ),
-                  )
-               ]
-            ),
-          )
         ],
       ),
     );

@@ -97,7 +97,7 @@ class AboutPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "v1.0.0 • Stable",
+                          "v2.0.0 • Stable",
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 14,

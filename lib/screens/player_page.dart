@@ -101,46 +101,55 @@ class PlayerPage extends StatelessWidget {
                   ),
 
                   // 3. Main Content
-                  Scaffold(
-                    backgroundColor: Colors.transparent,
-                    appBar: AppBar(
-                      centerTitle: true,
-                      title: Text(
-                        "NOW PLAYING",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
-                          color: Colors.white70,
-                        ),
-                      ),
+                  GestureDetector(
+                    onVerticalDragEnd: (details) {
+                      // Detect swipe down (positive velocity)
+                      if (details.primaryVelocity != null &&
+                          details.primaryVelocity! > 500) {
+                        Get.back();
+                      }
+                    },
+                    child: Scaffold(
                       backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      leading: IconButton(
-                        icon: Icon(Icons.keyboard_arrow_down,
-                            color: Colors.white, size: 30),
-                        onPressed: () => Get.back(),
-                      ),
-                      actions: [
-                        IconButton(
-                          icon: Icon(Icons.more_horiz,
+                      appBar: AppBar(
+                        centerTitle: true,
+                        title: Text(
+                          "NOW PLAYING",
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        leading: IconButton(
+                          icon: Icon(Icons.keyboard_arrow_down,
                               color: Colors.white, size: 30),
-                          onPressed: () {
-                            _showBottomSheet(_player, controller);
+                          onPressed: () => Get.back(),
+                        ),
+                        actions: [
+                          IconButton(
+                            icon: Icon(Icons.more_horiz,
+                                color: Colors.white, size: 30),
+                            onPressed: () {
+                              _showBottomSheet(_player, controller);
+                            },
+                          ),
+                        ],
+                      ),
+                      body: SafeArea(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            if (constraints.maxWidth >= 800) {
+                              return _buildDesktopLayout(_player, controller, context);
+                            } else {
+                              return _buildMobileLayout(_player, controller, context);
+                            }
                           },
                         ),
-                      ],
-                    ),
-                    body: SafeArea(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          if (constraints.maxWidth >= 800) {
-                            return _buildDesktopLayout(_player, controller, context);
-                          } else {
-                            return _buildMobileLayout(_player, controller, context);
-                          }
-                        },
                       ),
                     ),
                   )
@@ -244,57 +253,60 @@ class PlayerPage extends StatelessWidget {
   }
 
   Widget _buildArtwork(AudioController _player, double cardSize) {
-    return FlipCard(
-      speed: 600,
-      front: Container(
-        height: cardSize,
-        width: cardSize,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.white.withOpacity(0.05), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.6),
-              blurRadius: 40,
-              spreadRadius: 5,
-              offset: Offset(0, 20),
-            )
-          ],
-          image: DecorationImage(
-            image: NetworkImage(getSafeImage(_player.rs)),
-            fit: BoxFit.cover,
+    return Hero(
+      tag: "player_image",
+      child: FlipCard(
+        speed: 600,
+        front: Container(
+          height: cardSize,
+          width: cardSize,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withOpacity(0.05), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.6),
+                blurRadius: 40,
+                spreadRadius: 5,
+                offset: Offset(0, 20),
+              )
+            ],
+            image: DecorationImage(
+              image: NetworkImage(getSafeImage(_player.rs)),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-      ),
-      back: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-          child: Container(
-            height: cardSize,
-            width: cardSize,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
-            ),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(28.0),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Text(
-                    (_player.rs?.hasLyrics == true &&
-                            _player.lyrics?.data?.lyrics != null)
-                        ? _player.lyrics!.data!.lyrics!
-                        : "Lyrics not available",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      color: Colors.white.withOpacity(0.95),
-                      fontSize: 16,
-                      height: 1.8,
-                      fontWeight: FontWeight.w500,
+        back: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+            child: Container(
+              height: cardSize,
+              width: cardSize,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Text(
+                      (_player.rs?.hasLyrics == true &&
+                              _player.lyrics?.data?.lyrics != null)
+                          ? _player.lyrics!.data!.lyrics!
+                          : "Lyrics not available",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        color: Colors.white.withOpacity(0.95),
+                        fontSize: 16,
+                        height: 1.8,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
@@ -317,7 +329,7 @@ class PlayerPage extends StatelessWidget {
             children: [
               Text(
                 _player.rs?.name ?? "Unknown Title",
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Inter',
@@ -361,27 +373,30 @@ class PlayerPage extends StatelessWidget {
   }
 
   Widget _buildProgressBar(AudioController _player) {
-    return ProgressBar(
-      progress: _player.currentPosition,
-      total: _player.total,
-      buffered: _player.bufferedPosition,
-      progressBarColor: Colors.white,
-      baseBarColor: Colors.white.withOpacity(0.2),
-      bufferedBarColor: Colors.white.withOpacity(0.35),
-      thumbColor: Colors.white,
-      thumbRadius: 7,
-      thumbGlowRadius: 18,
-      barHeight: 4,
-      timeLabelPadding: 10,
-      timeLabelTextStyle: TextStyle(
-        color: Colors.white.withOpacity(0.7),
-        fontFamily: 'Inter',
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
+    return Hero(
+      tag: "player_playing_time",
+      child: ProgressBar(
+        progress: _player.currentPosition,
+        total: _player.total,
+        buffered: _player.bufferedPosition,
+        progressBarColor: Color(0xFFFF0055),
+        baseBarColor: Colors.white.withOpacity(0.2),
+        bufferedBarColor: Colors.white.withOpacity(0.35),
+        thumbColor: Color(0xFFFF0055),
+        thumbRadius: 7,
+        thumbGlowRadius: 18,
+        barHeight: 4,
+        timeLabelPadding: 10,
+        timeLabelTextStyle: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+          fontFamily: 'Inter',
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        onSeek: (duration) {
+          player.seek(duration);
+        },
       ),
-      onSeek: (duration) {
-        player.seek(duration);
-      },
     );
   }
 
@@ -466,35 +481,135 @@ class PlayerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildUpNext(AudioController _player) {
-    if (_player.suggestedSong?.data == null || _player.suggestedSong!.data!.length <= 1) {
-      return const SizedBox.shrink();
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(Icons.keyboard_arrow_up_rounded,
-            color: Colors.white.withOpacity(0.5)),
-        Text("UP NEXT",
-            style: TextStyle(
-                color: Colors.white.withOpacity(0.5),
-                fontSize: 10,
-                letterSpacing: 1)),
-        SizedBox(height: 10),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  Widget _buildQueueTile(Result song, bool isPlaying, AudioController _player, {bool isMobile = false}) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          int mappedIndex = _player.playlist?.children.indexWhere((src) {
+                return (src as UriAudioSource).tag.id == song.id;
+              }) ??
+              -1;
+          if (mappedIndex != -1) {
+            player.seek(Duration.zero, index: mappedIndex);
+          }
+        },
+        child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
+            color: isPlaying ? Colors.white.withOpacity(0.08) : Colors.transparent,
           ),
-          child: Text(
-            "Next: ${_player.suggestedSong!.data![(_player.songPos + 1) % _player.suggestedSong!.data!.length].name}",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.white70, fontSize: 13),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  getSafeImage(song),
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(color: Colors.white10, width: 48, height: 48),
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      song.name ?? "Unknown Title",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: isPlaying ? Colors.white : Colors.white.withOpacity(0.85),
+                        fontSize: 15,
+                        fontWeight: isPlaying ? FontWeight.w700 : FontWeight.w500,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      (song.artists?.all != null && song.artists!.all!.isNotEmpty)
+                          ? song.artists!.all!.first.name ?? ""
+                          : "Unknown Artist",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.5),
+                        fontSize: 13,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (isPlaying)
+                Icon(Icons.equalizer_rounded, color: Colors.white, size: 20)
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildUpNext(AudioController _player, {bool isMobile = false}) {
+    if (_player.suggestedSong?.data == null || _player.suggestedSong!.data!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    if (!isMobile) {
+      // Desktop minimal view (if needed, though desktop usually has the side panel)
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(Icons.keyboard_arrow_up_rounded, color: Colors.white.withOpacity(0.5)),
+          Text("UP NEXT", style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10, letterSpacing: 1)),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              "Next: ${_player.suggestedSong!.data![(_player.songPos + 1) % _player.suggestedSong!.data!.length].name}",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Full Mobile Up Next List
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 12),
+          child: Row(
+            children: [
+              Icon(Icons.queue_music_rounded, color: Colors.white70, size: 20),
+              SizedBox(width: 8),
+              Text(
+                "Up Next",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Inter',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // We use a Column here since it's inside a SingleChildScrollView
+        // This avoids nested scrolling issues while still being relatively efficient for lists of this size
+        for (var i = 0; i < _player.suggestedSong!.data!.length; i++)
+          _buildQueueTile(_player.suggestedSong!.data![i], i == _player.songPos, _player, isMobile: true),
       ],
     );
   }
@@ -505,6 +620,16 @@ class PlayerPage extends StatelessWidget {
 
     return Column(
       children: [
+        // Swipe handle indicator
+        Container(
+          margin: const EdgeInsets.only(top: 8, bottom: 0),
+          width: 40,
+          height: 5,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(2.5),
+          ),
+        ),
         Expanded(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
@@ -523,9 +648,9 @@ class PlayerPage extends StatelessWidget {
                     _buildProgressBar(_player),
                     SizedBox(height: 20),
                     _buildControls(_player),
-                    SizedBox(height: 40),
-                    _buildUpNext(_player),
-                    SizedBox(height: 40),
+                    SizedBox(height: 30),
+                    _buildUpNext(_player, isMobile: true),
+                    SizedBox(height: 60),
                   ],
                 ),
               ),
@@ -543,7 +668,7 @@ class PlayerPage extends StatelessWidget {
     return Container(
       width: 400,
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2), // Very subtle, clean background
+        // color: Colors.black.withOpacity(0.2), // Very subtle, clean background
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,70 +700,7 @@ class PlayerPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 var song = _player.suggestedSong!.data![index];
                 bool isPlaying = song.id == _player.rs?.id;
-                return Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                       int mappedIndex = _player.playlist?.children.indexWhere((src) {
-                          return (src as UriAudioSource).tag.id == song.id;
-                       }) ?? -1;
-                       if (mappedIndex != -1) {
-                           player.seek(Duration.zero, index: mappedIndex);
-                       }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                      color: isPlaying ? Colors.white.withOpacity(0.08) : Colors.transparent,
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: Image.network(
-                              getSafeImage(song),
-                              width: 44,
-                              height: 44,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(color: Colors.grey[800], width: 44, height: 44),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  song.name ?? "Unknown Title",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: isPlaying ? Colors.white : Colors.white.withOpacity(0.85),
-                                    fontSize: 15,
-                                    fontWeight: isPlaying ? FontWeight.w600 : FontWeight.w500,
-                                    fontFamily: 'Inter',
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  (song.artists?.primary != null && song.artists!.primary!.isNotEmpty)
-                                      ? song.artists!.primary!.first.name ?? "" : "",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.5),
-                                    fontSize: 13,
-                                    fontFamily: 'Inter',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (isPlaying)
-                            Icon(Icons.equalizer_rounded, color: Colors.white, size: 20)
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                return _buildQueueTile(song, isPlaying, _player);
               },
             ),
           ),
@@ -872,7 +934,7 @@ class PlayerPage extends StatelessWidget {
             children: [
               Container(
                 width: 250, // Mirroring the width of SideBar on main_page
-                color: Color(0xFF151515), // Optional subtle sidebar background
+                color: Colors.transparent, // Optional subtle sidebar background
                 child: SideBar(),
               ),
               Expanded(
@@ -881,6 +943,7 @@ class PlayerPage extends StatelessWidget {
                 ),
               ),
               _buildDesktopPlaylist(_player),
+              SizedBox(width:16),
             ],
           ),
         ),

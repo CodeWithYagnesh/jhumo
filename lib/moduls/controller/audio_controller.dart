@@ -39,7 +39,7 @@ class AudioController extends GetxController {
   void onInit() {
     super.onInit();
     getRecentSong();
-    // startStreaming(); // Removed from onInit to prevent early initialization issues
+    startStreaming();
     player.setLoopMode(LoopMode.off); // Ensure we don't loop a single song
   }
 
@@ -205,16 +205,25 @@ class AudioController extends GetxController {
         update();
       }
     });
+    player.durationStream.listen((Duration? d) {
+      if (d != null) {
+        total = d;
+        update();
+      }
+    });
+
     player.currentIndexStream.listen((i) {
       if (i != null) {
         songPos = i;
 
-        // SAFETY CHECK: Make sure the index exists in the list!
         if (suggestedSong?.data != null && i < suggestedSong!.data!.length) {
-          total = player.duration ?? Duration.zero;
           getLyrics();
-
           rs = suggestedSong!.data![i]; // Safely update the current song
+
+          // Fallback total duration from metadata if player duration is not yet available
+          if (rs?.duration != null && rs!.duration! > 0) {
+            total = Duration(seconds: rs!.duration!);
+          }
 
           // Load more songs when we are near the end of the playlist (e.g., 2 songs left)
           if (i >= suggestedSong!.data!.length - 2) {
@@ -326,15 +335,25 @@ class AudioController extends GetxController {
 
   _appendSuggestions(List<Result> suggestions, ConcatenatingAudioSource currentPlaylist) async {
     for (var song in suggestions) {
-      // Stop appending if the player has moved on to a completely new playlist
-      if (playlist != currentPlaylist) {
-        print("AudioController: Playlist changed, stopping background fetch.");
+      try {
+        // Stop appending if the player has moved on to a completely new playlist
+        // or if the current playlist is disposed
+        if (playlist != currentPlaylist) {
+          print("AudioController: Playlist changed, stopping background fetch.");
+          break;
+        }
+
+        AudioSource? source = await _createAudioSource(song);
+
+        // Double check after await
+        if (playlist == currentPlaylist && source != null) {
+          await currentPlaylist.add(source);
+          print("AudioController: Appended ${song.name} to playlist.");
+        }
+      } catch (e) {
+        print("AudioController: Caught safe error during playlist append: $e");
+        // Usually happens on Web if the stream is closed mid-operation
         break;
-      }
-      AudioSource? source = await _createAudioSource(song);
-      if (playlist == currentPlaylist && source != null) {
-        await currentPlaylist.add(source);
-        print("AudioController: Appended ${song.name} to playlist.");
       }
     }
   }
@@ -389,11 +408,15 @@ onNext() {
   setToNext(Result r) {
     if (playlist != null) {
       _createAudioSource(r).then((source) {
-         if (source != null && playlist != null) {
-            int insertIndex = (player.currentIndex ?? 0) + 1;
-            if (insertIndex > playlist!.length) insertIndex = playlist!.length;
-            playlist!.insert(insertIndex, source);
-            print("AudioController: Set to play next: ${r.name}");
+         try {
+           if (source != null && playlist != null) {
+              int insertIndex = (player.currentIndex ?? 0) + 1;
+              if (insertIndex > playlist!.length) insertIndex = playlist!.length;
+              playlist!.insert(insertIndex, source);
+              print("AudioController: Set to play next: ${r.name}");
+           }
+         } catch (e) {
+           print("AudioController: Error inserting song: $e");
          }
       });
     }

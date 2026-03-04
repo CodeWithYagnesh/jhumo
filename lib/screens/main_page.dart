@@ -135,18 +135,20 @@ class _MainPageState extends State<MainPage> {
                       if (!isMobile)
                         Container(
                           width: 250, // Fixed width for sidebar like YT Music
-                          child:
-                              SideBar(), // We will update SideBar later to include top logo/search
+                          child: SideBar(),
                         ),
                       Expanded(
-                        child:
-                            GetBuilder<ScreenController>(builder: (pageCtrl) {
-                          return pages[pageCtrl.currentScreen]['page'];
-                        }),
+                        child: Column(
+                          children: [
+                            if (!isMobile) _buildDesktopTopBar(),
+                            Expanded(
+                              child: GetBuilder<ScreenController>(builder: (pageCtrl) {
+                                return pages[pageCtrl.currentScreen]['page'];
+                              }),
+                            ),
+                          ],
+                        ),
                       ),
-                      // We can optionally put settings on the right, but YT music doesn't do this.
-                      // if (!isMobile) Expanded(flex: 3, child: SettingPage())
-                      // Let's remove the right SettingPage on desktop and move it to Sidebar navigation
                     ],
                   ),
                 ),
@@ -181,7 +183,7 @@ class _MainPageState extends State<MainPage> {
                 return Positioned(
 
                   bottom: isMobile ? 20 : 0,
-                  left: isMobile ? 20 : 0,
+                  left: isMobile ? 20 : 0, // Offset by sidebar width on desktop
                   right: isMobile ? 20 : 0,
                   child: Column(
 
@@ -266,15 +268,26 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               Positioned(
-                bottom: 0,
+                bottom: -2, // slightly lower to keep the "thin line" look at the bottom
                 left: 0,
                 right: 0,
-                height: 3,
-                child: LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF0055)),
-                  minHeight: 3,
+                child: Hero(
+                  tag: "player_playing_time",
+                  child: ProgressBar(
+                    progress: controller.currentPosition,
+                    total: controller.total,
+                    buffered: controller.bufferedPosition,
+                    progressBarColor: Color(0xFFFF0055),
+                    baseBarColor: Colors.transparent,
+                    bufferedBarColor: Colors.transparent,
+                    thumbColor: Colors.transparent,
+                    thumbRadius: 0,
+                    barHeight: 3,
+                    timeLabelLocation: TimeLabelLocation.none,
+                    onSeek: (duration) {
+                      player.seek(duration);
+                    },
+                  ),
                 ),
               ),
               Row(
@@ -405,19 +418,22 @@ class _MainPageState extends State<MainPage> {
                   child: Row(
                     children: [
                       // Skip going to full player on desktop unless needed, maybe just show image
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              (controller.rs?.image != null &&
-                                      controller.rs!.image!.isNotEmpty)
-                                  ? controller.rs!.image!.last.url!
-                                  : "",
+                      Hero(
+                        tag: "player_image",
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                (controller.rs?.image != null &&
+                                        controller.rs!.image!.isNotEmpty)
+                                    ? controller.rs!.image!.last.url!
+                                    : "",
+                              ),
+                              fit: BoxFit.cover,
                             ),
-                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
@@ -574,23 +590,93 @@ class _MainPageState extends State<MainPage> {
             left: 0, // Avoid sidebar overlap
             right: 0,
 
-            child: ProgressBar(
-              progress: controller.currentPosition,
-              total: controller.total,
-              buffered: controller.bufferedPosition,
-              progressBarColor: Color(0xFFFF0055),
-              baseBarColor: Colors.white.withOpacity(0.1),
-              bufferedBarColor: Colors.white.withOpacity(0.3),
-              thumbColor: Color(0xFFFF0055),
-              thumbRadius: 5,
-              thumbGlowRadius: 15,
-              barHeight: 2,
-              timeLabelLocation: TimeLabelLocation.none,
-              onSeek: (duration) {
-                player.seek(duration);
-              },
+            child: Hero(
+              tag: "player_playing_time",
+              child: ProgressBar(
+                progress: controller.currentPosition,
+                total: controller.total,
+                buffered: controller.bufferedPosition,
+                progressBarColor: Color(0xFFFF0055),
+                baseBarColor: Colors.white.withOpacity(0.1),
+                bufferedBarColor: Colors.white.withOpacity(0.3),
+                thumbColor: Color(0xFFFF0055),
+                thumbRadius: 5,
+                thumbGlowRadius: 15,
+                barHeight: 2,
+                timeLabelLocation: TimeLabelLocation.none,
+                onSeek: (duration) {
+                  player.seek(duration);
+                },
+              ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopTopBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          // Search Bar
+          Expanded(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 600),
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: 16),
+                  Icon(Icons.search_rounded, color: Colors.white54, size: 20),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'Inter'),
+                      decoration: InputDecoration(
+                        hintText: "Search for songs, artists, or albums...",
+                        hintStyle: TextStyle(color: Colors.white38, fontSize: 14),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      onSubmitted: (query) {
+                        if (query.trim().isNotEmpty) {
+                          Get.to(() => SearchPage(initialQuery: query),
+                              transition: Transition.fadeIn,
+                              duration: Duration(milliseconds: 300));
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 24),
+          // Actions
+          IconButton(
+            icon: Icon(Icons.notifications_none_rounded, color: Colors.white70),
+            onPressed: () {},
+          ),
+          SizedBox(width: 8),
+          Container(
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white24),
+            ),
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: Colors.white10,
+              child: Icon(Icons.person, color: Colors.white, size: 18),
+            ),
+          )
         ],
       ),
     );
