@@ -142,7 +142,8 @@ class _MainPageState extends State<MainPage> {
                           children: [
                             if (!isMobile) _buildDesktopTopBar(),
                             Expanded(
-                              child: GetBuilder<ScreenController>(builder: (pageCtrl) {
+                              child: GetBuilder<ScreenController>(
+                                  builder: (pageCtrl) {
                                 return pages[pageCtrl.currentScreen]['page'];
                               }),
                             ),
@@ -181,12 +182,10 @@ class _MainPageState extends State<MainPage> {
                 }
 
                 return Positioned(
-
                   bottom: isMobile ? 20 : 0,
                   left: isMobile ? 20 : 0, // Offset by sidebar width on desktop
                   right: isMobile ? 20 : 0,
                   child: Column(
-
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // The Player
@@ -268,7 +267,8 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               Positioned(
-                bottom: -2, // slightly lower to keep the "thin line" look at the bottom
+                bottom:
+                    -2, // slightly lower to keep the "thin line" look at the bottom
                 left: 0,
                 right: 0,
                 child: Hero(
@@ -398,194 +398,201 @@ class _MainPageState extends State<MainPage> {
       decoration: BoxDecoration(
         color: Color(0xFF1E1E1E), // Solid dark grey bottom bar
 
-        border:
-            Border(top: BorderSide(color: Colors.white.withOpacity(0.1))),
+        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.1))),
       ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           // Top thin progress bar like YouTube Music (Interactive)
 
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Left: Song Info
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    children: [
-                      // Skip going to full player on desktop unless needed, maybe just show image
-                      Hero(
-                        tag: "player_image",
-                        child: Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                (controller.rs?.image != null &&
-                                        controller.rs!.image!.isNotEmpty)
-                                    ? controller.rs!.image!.last.url!
-                                    : "",
+          GestureDetector(
+            onTap: () {
+              Get.to(
+                () => PlayerPage(
+                  isPlaying: controller.rs != null,
+                  result: controller.rs!,
+                ),
+                transition: Transition.downToUp,
+                duration: Duration(milliseconds: 400),
+              );
+            },
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Left: Song Info
+                  Expanded(
+                    flex: 1,
+                    child: Row(
+                      children: [
+                        // Skip going to full player on desktop unless needed, maybe just show image
+                        Hero(
+                          tag: "player_image",
+                          child: Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  (controller.rs?.image != null &&
+                                          controller.rs!.image!.isNotEmpty)
+                                      ? controller.rs!.image!.last.url!
+                                      : "",
+                                ),
+                                fit: BoxFit.cover,
                               ),
-                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                controller.rs?.name ?? "Unknown",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                (controller.rs?.artists?.all != null &&
+                                        controller.rs!.artists!.all!.isNotEmpty)
+                                    ? controller.rs!.artists!.all!.first.name ??
+                                        "Unknown Artist"
+                                    : "Unknown Artist",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  color: Colors.white60,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Center: Playback Controls
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              controller.rs?.name ?? "Unknown",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
+                            IconButton(
+                              icon: Icon(Icons.shuffle_rounded,
+                                  color: controller.isShuffle
+                                      ? Color(0xFFFF0055)
+                                      : Colors.white54,
+                                  size: 24),
+                              onPressed: () {
+                                controller.toggleShuffle();
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.skip_previous_rounded,
+                                  color: Colors.white, size: 36),
+                              onPressed: () {
+                                controller.onPrevious();
+                              },
+                            ),
+                            SizedBox(width: 8),
+                            Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: IconButton(
+                                icon: Icon(
+                                  controller.isPlay
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                  color: Colors.black,
+                                  size: 36,
+                                ),
+                                onPressed: () {
+                                  controller.onPlayPause();
+                                },
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              (controller.rs?.artists?.all != null &&
-                                      controller
-                                          .rs!.artists!.all!.isNotEmpty)
-                                  ? controller
-                                          .rs!.artists!.all!.first.name ??
-                                      "Unknown Artist"
-                                  : "Unknown Artist",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                color: Colors.white60,
-                                fontSize: 14,
-                              ),
+                            SizedBox(width: 8),
+                            IconButton(
+                              icon: Icon(Icons.skip_next_rounded,
+                                  color: Colors.white, size: 36),
+                              onPressed: () {
+                                controller.onNext();
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.repeat_rounded,
+                                  color: Colors.white54,
+                                  size: 24), // TODO: toggle repeat state
+                              onPressed: () {
+                                // controller.toggleRepeat();
+                              },
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                // Center: Playback Controls
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.shuffle_rounded,
-                                color: controller.isShuffle
-                                    ? Color(0xFFFF0055)
-                                    : Colors.white54,
-                                size: 24),
-                            onPressed: () {
-                              controller.toggleShuffle();
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.skip_previous_rounded,
-                                color: Colors.white, size: 36),
-                            onPressed: () {
-                              controller.onPrevious();
-                            },
-                          ),
-                          SizedBox(width: 8),
-                          Container(
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white),
-                            child: IconButton(
-                              icon: Icon(
-                                controller.isPlay
-                                    ? Icons.pause_rounded
-                                    : Icons.play_arrow_rounded,
-                                color: Colors.black,
-                                size: 36,
+                  // Right: Extra Controls (Volume, time)
+                  Expanded(
+                    flex: 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${formatDuration(controller.currentPosition)} / ${formatDuration(controller.total)}",
+                          style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 13,
+                              fontFamily: 'Inter'),
+                        ),
+                        SizedBox(width: 16),
+                        IconButton(
+                          icon: Icon(Icons.volume_up_rounded,
+                              color: Colors.white70),
+                          onPressed: () {},
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Open full screen player functionality
+                            Get.to(
+                              () => PlayerPage(
+                                isPlaying: controller.rs != null,
+                                result: controller.rs!,
                               ),
-                              onPressed: () {
-                                controller.onPlayPause();
-                              },
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          IconButton(
-                            icon: Icon(Icons.skip_next_rounded,
-                                color: Colors.white, size: 36),
-                            onPressed: () {
-                              controller.onNext();
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.repeat_rounded,
-                                color: Colors.white54,
-                                size: 24), // TODO: toggle repeat state
-                            onPressed: () {
-                              // controller.toggleRepeat();
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Right: Extra Controls (Volume, time)
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "${formatDuration(controller.currentPosition)} / ${formatDuration(controller.total)}",
-                        style: TextStyle(
-                            color: Colors.white54,
-                            fontSize: 13,
-                            fontFamily: 'Inter'),
-                      ),
-                      SizedBox(width: 16),
-                      IconButton(
-                        icon: Icon(Icons.volume_up_rounded,
-                            color: Colors.white70),
-                        onPressed: () {},
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Open full screen player functionality
-                          Get.to(
-                            () => PlayerPage(
-                              isPlaying: controller.rs != null,
-                              result: controller.rs!,
-                            ),
-                            transition: Transition.downToUp,
-                            duration: Duration(milliseconds: 400),
-                          );
-                        },
-                        child: Icon(Icons.open_in_full_rounded,
-                            color: Colors.white70, size: 20),
-                      )
-                    ],
-                  ),
-                )
-              ],
+                              transition: Transition.downToUp,
+                              duration: Duration(milliseconds: 400),
+                            );
+                          },
+                          child: Icon(Icons.open_in_full_rounded,
+                              color: Colors.white70, size: 20),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
           Positioned(
-
             top: -5, // slight offset to allow thumb drag region
             left: 0, // Avoid sidebar overlap
             right: 0,
@@ -637,10 +644,14 @@ class _MainPageState extends State<MainPage> {
                   SizedBox(width: 12),
                   Expanded(
                     child: TextField(
-                      style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'Inter'),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Inter'),
                       decoration: InputDecoration(
                         hintText: "Search for songs, artists, or albums...",
-                        hintStyle: TextStyle(color: Colors.white38, fontSize: 14),
+                        hintStyle:
+                            TextStyle(color: Colors.white38, fontSize: 14),
                         border: InputBorder.none,
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
