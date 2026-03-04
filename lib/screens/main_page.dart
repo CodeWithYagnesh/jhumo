@@ -6,7 +6,6 @@ import 'package:jhumo/main.dart';
 import 'package:jhumo/moduls/controller/audio_controller.dart';
 import 'package:jhumo/moduls/controller/page_controller.dart';
 import 'package:jhumo/screens/collaboration_page.dart';
-import 'package:jhumo/screens/fav_page.dart';
 import 'package:jhumo/screens/home_page.dart';
 import 'package:jhumo/screens/player_page.dart';
 import 'package:jhumo/screens/playlists_page.dart';
@@ -14,6 +13,7 @@ import 'package:jhumo/screens/search_page.dart';
 import 'package:jhumo/screens/setting_page.dart';
 import 'package:jhumo/screens/side_bar.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:jhumo/moduls/model/service.dart';
 // import 'package:simple_gradient_text/simple_gradient_text.dart'; // Assuming this might be used or keeping imports clean.
 
 class MainPage extends StatefulWidget {
@@ -24,7 +24,18 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  var _audioController = Get.put(AudioController());
+  final _audioController = Get.put(AudioController());
+
+  // Helper to safely get the highest quality image
+  String getSafeImage(Result? item) {
+    if (item?.image == null || item!.image!.isEmpty) {
+      return "";
+    }
+    if (item.image!.isNotEmpty) {
+      return item.image!.last.url ?? item.image!.first.url ?? "";
+    }
+    return "";
+  }
 
   List<Map> pages = [
     {"name": "Home", "page": HomePage(), "icon": Icons.home_rounded},
@@ -57,19 +68,80 @@ class _MainPageState extends State<MainPage> {
       body: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Background Gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF1A1A1A), // Dark Grey/Black
-                  Colors.black,
-                ],
-                stops: [0.0, 0.5],
-              ),
-            ),
+          // Background Gradient / Dynamic Background
+          GetBuilder<AudioController>(
+            builder: (audioCtrl) {
+              return GetBuilder<ScreenController>(
+                builder: (screenCtrl) {
+                  final isHome = screenCtrl.currentScreen == 0;
+                  final currentSong = audioCtrl.rs;
+                  final imageUrl = getSafeImage(currentSong);
+
+                  return Stack(
+                    children: [
+                      // Default Gradient Background
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              const Color(0xFF1A1A1A),
+                              Colors.black,
+                            ],
+                            stops: const [0.0, 0.5],
+                          ),
+                        ),
+                      ),
+
+                      // Dynamic Blurred Background (Only on Home Page when playing)
+                      if (isHome && currentSong != null)
+                        Positioned.fill(
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 500),
+                            opacity: 1.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageUrl.isNotEmpty
+                                      ? NetworkImage(imageUrl)
+                                      : const AssetImage("assets/ph_song.jpg")
+                                          as ImageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+                                child: Container(
+                                  color: Colors.black.withOpacity(0.6),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      // Gradient Overlay for readability (Only on Home Page when playing)
+                      if (isHome && currentSong != null)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black.withOpacity(0.25),
+                                  Colors.black.withOpacity(0.65),
+                                  Colors.black.withOpacity(1.0),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
 
           // Main Content
